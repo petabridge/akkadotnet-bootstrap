@@ -1,2 +1,2 @@
-#### 0.1.0 August 14 2017 ####
-First release
+#### 0.1.0 March 20 2018 ####
+Initial release of `Akka.Bootstrap.Docker`, which you can read more about here: https://github.com/petabridge/akkadotnet-bootstrap/tree/docker-bootstrap/src/Akka.Bootstrap.Docker
