@@ -1,12 +1,12 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2017 Your Company</Copyright>
-    <Authors>Your Authors</Authors>
+    <Copyright>Copyright © 2018 Petabridge, LLC</Copyright>
+    <Authors>Petabridge</Authors>
     <VersionPrefix>0.1.0</VersionPrefix>
     <PackageReleaseNotes>Placeholder</PackageReleaseNotes>
-    <PackageIconUrl></PackageIconUrl>
-    <PackageProjectUrl></PackageProjectUrl>
-    <PackageLicenseUrl></PackageLicenseUrl>
+     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>

@@ -125,41 +125,6 @@ Target "RunTests" (fun _ ->
     projects |> Seq.iter (runSingleProject)
 )
 
-Target "NBench" <| fun _ ->
-    let nbenchTestPath = findToolInSubPath "NBench.Runner.exe" (toolsDir @@ "NBench.Runner*")
-    printfn "Using NBench.Runner: %s" nbenchTestPath
-
-    let nbenchTestAssemblies = !! "./src/**/*Tests.Performance.dll" // doesn't support .NET Core at the moment
-
-    let runNBench assembly =
-        let includes = getBuildParam "include"
-        let excludes = getBuildParam "exclude"
-        let teamcityStr = (getBuildParam "teamcity")
-        let enableTeamCity = 
-            match teamcityStr with
-            | null -> false
-            | "" -> false
-            | _ -> bool.Parse teamcityStr
-
-        let args = StringBuilder()
-                |> append assembly
-                |> append (sprintf "output-directory=\"%s\"" outputPerfTests)
-                |> append (sprintf "concurrent=\"%b\"" true)
-                |> append (sprintf "trace=\"%b\"" true)
-                |> append (sprintf "teamcity=\"%b\"" enableTeamCity)
-                |> appendIfNotNullOrEmpty includes "include="
-                |> appendIfNotNullOrEmpty excludes "include="
-                |> toText
-
-        let result = ExecProcess(fun info -> 
-            info.FileName <- nbenchTestPath
-            info.WorkingDirectory <- (Path.GetDirectoryName (FullName nbenchTestPath))
-            info.Arguments <- args) (System.TimeSpan.FromMinutes 45.0) (* Reasonably long-running task. *)
-        if result <> 0 then failwithf "NBench.Runner failed. %s %s" nbenchTestPath args
-    
-    nbenchTestAssemblies |> Seq.iter runNBench
-
-
 //--------------------------------------------------------------------------------
 // Nuget targets 
 //--------------------------------------------------------------------------------
@@ -271,7 +236,6 @@ Target "Nuget" DoNothing
 // all
 "BuildRelease" ==> "All"
 "RunTests" ==> "All"
-"NBench" ==> "All"
 "Nuget" ==> "All"
 
 RunTargetOrDefault "Help"
