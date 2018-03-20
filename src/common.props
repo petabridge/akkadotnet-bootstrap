@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <Copyright>Copyright © 2018 Petabridge®</Copyright>
+    <Authors>Petabridge</Authors>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <PackageReleaseNotes>Initial release of `Akka.Bootstrap.Docker`, which you can read more about here: https://github.com/petabridge/akkadotnet-bootstrap/tree/docker-bootstrap/src/Akka.Bootstrap.Docker</PackageReleaseNotes>
+    <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <XunitVersion>2.3.0</XunitVersion>
+    <TestSdkVersion>15.3.0</TestSdkVersion>
+  </PropertyGroup>
+</Project>
