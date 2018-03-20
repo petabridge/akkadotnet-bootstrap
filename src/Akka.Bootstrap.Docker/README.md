@@ -7,7 +7,7 @@ At the moment, the build scripts here support the following runtimes:
 1. .NET Core 2.0
 
 ## Bootstrapping your Akka.NET Applications with Docker
-`Akka.Bootstrap.Docker` depends on having some standardized environment variables made available inside each of your Docker containers. The `Dockerfile` and [`get-dockerip.sh`](get-dockerip.sh)
+`Akka.Bootstrap.Docker` depends on having some standardized environment variables made available inside each of your Docker containers. The [`Dockerfile`](Dockerfile) and [`get-dockerip.sh`](get-dockerip.sh)
 
 ### Using `Akka.Bootstrap.Docker`
 The `Akka.Bootstrap.Docker` NuGet package itself is pretty simple - all it does is expose the `DockerBootstrap` class which gives you the ability to automatically load all of the environment variables we pass in via Docker into your Akka.Remote and Akka.Cluster configuration:
@@ -31,7 +31,7 @@ Inside `DockerBootstrap` and the `Dockerfile` we've provided we search for the f
 If none of these values are provided inside the Docker environment, Akka.NET will fall back to whatever was configured inside your application itself.
 
 ### Building a Docker Image
-First things first, you'll need to copy the [`Dockerfile`](Dockefile) inside this repository and modify it in the following ways:
+First things first, you'll need to copy the [`Dockerfile`](Dockerfile) inside this repository and modify it in the following ways:
 
 1. Replace all `[PATH_TO_YOUR_.CSPROJ]` instances with the relative path from the `Dockerfile` to your `.csproj` file used in the Akka.NET application.
 2. Replace the `[YOUR .CSPROJ .DLL OUTPUT]` at the end with the name of your `.csproj`'s .dll output file.

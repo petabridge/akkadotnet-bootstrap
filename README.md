@@ -1,8 +1,10 @@
-# Akka.Bootstrap.Docker
+# Akka.NET Bootstrapping Tools
 
 Akka.Remote and Akka.Cluster bootstrapping utilities for [Akka.NET](http://getakka.net/) on various runtime environments.
 
-To learn more about a specific runtime environment, please see 
+To learn more about a specific runtime environment, please see the following:
+
+* **[Bootstrapping Akka.NET for Docker](src/Akka.Bootstrap.Docker)**
 
 ## Building this solution
 To run the build script associated with this solution, execute the following:
