@@ -1,25 +1,31 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="DockerBootstrap.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Linq;
 using Akka.Configuration;
 
 namespace Akka.Bootstrap.Docker
 {
     /// <summary>
-    /// Modifies our HOCON configuration based on environment variables
-    /// supplied by Docker.
+    ///     Modifies our HOCON configuration based on environment variables
+    ///     supplied by Docker.
     /// </summary>
     public static class DockerBootstrap
     {
         /// <summary>
-        /// Extension menthod intended to chain configuration derived from
-        /// Docker-supplied environment variables to the front of the fallback chain,
-        /// overiding any values that were provided in a built-in HOCON file.
+        ///     Extension menthod intended to chain configuration derived from
+        ///     Docker-supplied environment variables to the front of the fallback chain,
+        ///     overiding any values that were provided in a built-in HOCON file.
         /// </summary>
         /// <param name="input">The current configuration object.</param>
-        /// <returns>An updated Config object with <see cref="input"/> chained behind it as a fallback. Immutable.</returns>
+        /// <returns>An updated Config object with <see cref="input" /> chained behind it as a fallback. Immutable.</returns>
         /// <example>
-        /// var config = HoconLoader.FromFile("myHocon.hocon");
-        /// var myActorSystem = ActorSystem.Create("mySys", config.BootstrapFromDocker());
+        ///     var config = HoconLoader.FromFile("myHocon.hocon");
+        ///     var myActorSystem = ActorSystem.Create("mySys", config.BootstrapFromDocker());
         /// </example>
         public static Config BootstrapFromDocker(this Config input)
         {
@@ -38,22 +44,20 @@ namespace Akka.Bootstrap.Docker
 
 
             if (!string.IsNullOrEmpty(clusterIp))
-            {
-                input = ConfigurationFactory.ParseString("akka.remote.dot-netty.tcp.hostname=0.0.0.0" + Environment.NewLine +
+                input = ConfigurationFactory.ParseString("akka.remote.dot-netty.tcp.hostname=0.0.0.0" +
+                                                         Environment.NewLine +
                                                          "akka.remote.dot-netty.tcp.public-hostname=" + clusterIp)
                     .WithFallback(input);
-            }
 
             if (!string.IsNullOrEmpty(clusterPort) && int.TryParse(clusterPort, out var portNum))
-            {
                 input = ConfigurationFactory.ParseString("akka.remote.dot-netty.tcp.port=" + portNum)
                     .WithFallback(input);
-            }
 
             if (!string.IsNullOrEmpty(clusterSeeds))
             {
                 var seeds = clusterSeeds.Split(',');
-                var injectedClusterConfigString = seeds.Aggregate("akka.cluster.seed-nodes = [", (current, seed) => current + (@"""" + seed + @""", "));
+                var injectedClusterConfigString = seeds.Aggregate("akka.cluster.seed-nodes = [",
+                    (current, seed) => current + @"""" + seed + @""", ");
                 injectedClusterConfigString += "]";
                 input = ConfigurationFactory.ParseString(injectedClusterConfigString)
                     .WithFallback(input);
