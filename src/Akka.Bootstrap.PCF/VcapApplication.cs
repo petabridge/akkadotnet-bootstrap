@@ -1,20 +1,24 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="VcapApplication.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Text;
-using Akka.Bootstrap.PCF.Serialization;
 
 namespace Akka.Bootstrap.PCF
 {
     /// <summary>
-    /// Exposes the values from the VCAP_SERVICES PCF environment variable.
+    ///     Exposes the values from the VCAP_SERVICES PCF environment variable.
     /// </summary>
     /// <remarks>
     ///     See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html for more details.
     /// </remarks>
     public sealed class VcapApplication
     {
-        public VcapApplication(string applicationId, string applicationName, IReadOnlyList<string> applicationUris, 
-            string applicationVersion, string cfApi, AppResourceLimits limits, string name, 
+        public VcapApplication(string applicationId, string applicationName, IReadOnlyList<string> applicationUris,
+            string applicationVersion, string cfApi, AppResourceLimits limits, string name,
             string spaceId, string spaceName, IReadOnlyList<string> uris, string version)
         {
             ApplicationId = applicationId;
@@ -36,9 +40,10 @@ namespace Akka.Bootstrap.PCF
         public string ApplicationVersion { get; }
 
         /// <summary>
-        /// The URI of the Cloud Foundry host endpoint.
+        ///     The URI of the Cloud Foundry host endpoint.
         /// </summary>
         public string CfApi { get; }
+
         public AppResourceLimits Limits { get; }
         public string Name { get; }
         public string SpaceId { get; }
@@ -61,10 +66,7 @@ namespace Akka.Bootstrap.PCF
                 .AppendLine("  ApplicationUris:");
 
             foreach (var uri in ApplicationUris)
-            {
                 sb.AppendLine("    " + uri);
-            }
-
 
 
             sb.AppendLine($"  CfApi: {CfApi}")
@@ -75,16 +77,14 @@ namespace Akka.Bootstrap.PCF
                 .AppendLine("  Uris:");
 
             foreach (var uri in Uris)
-            {
                 sb.AppendLine("    " + uri);
-            }
 
             return Limits.ToString(sb);
         }
     }
 
     /// <summary>
-    /// Limits on application resources in PCF at the moment when this application was booted.
+    ///     Limits on application resources in PCF at the moment when this application was booted.
     /// </summary>
     public sealed class AppResourceLimits
     {
@@ -96,17 +96,17 @@ namespace Akka.Bootstrap.PCF
         }
 
         /// <summary>
-        /// Disk consumption limits in megabytes.
+        ///     Disk consumption limits in megabytes.
         /// </summary>
         public int Disk { get; }
 
         /// <summary>
-        /// The number of allowed file descriptors.
+        ///     The number of allowed file descriptors.
         /// </summary>
         public int Fds { get; }
 
         /// <summary>
-        /// The amount of available memory in megabytes.
+        ///     The amount of available memory in megabytes.
         /// </summary>
         public int Mem { get; }
 

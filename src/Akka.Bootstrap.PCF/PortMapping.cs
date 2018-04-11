@@ -1,7 +1,13 @@
-﻿namespace Akka.Bootstrap.PCF
+﻿// -----------------------------------------------------------------------
+// <copyright file="PortMapping.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace Akka.Bootstrap.PCF
 {
     /// <summary>
-    /// Expresses a mapping between an internal and external port
+    ///     Expresses a mapping between an internal and external port
     /// </summary>
     public sealed class PortMapping
     {
@@ -12,12 +18,12 @@
         }
 
         /// <summary>
-        /// The external port visible to remote parties.
+        ///     The external port visible to remote parties.
         /// </summary>
         public int External { get; }
 
         /// <summary>
-        /// The internal port used internally.
+        ///     The internal port used internally.
         /// </summary>
         public int Internal { get; }
 

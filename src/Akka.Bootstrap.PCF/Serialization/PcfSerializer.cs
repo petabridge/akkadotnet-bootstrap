@@ -34,8 +34,10 @@ namespace Akka.Bootstrap.PCF.Serialization
         public static VcapApplication ToVcapApplication(this JsonVcapApplication jsonVcap)
         {
             var appLimits = new AppResourceLimits(jsonVcap.limits.disk, jsonVcap.limits.fds, jsonVcap.limits.mem);
-            return new VcapApplication(jsonVcap.application_id, jsonVcap.application_name, jsonVcap.application_uris ?? new List<string>(), jsonVcap.application_version,
-                jsonVcap.cf_api, appLimits, jsonVcap.name, jsonVcap.space_id, jsonVcap.space_name, jsonVcap.uris ?? new List<string>(), jsonVcap.version);
+            return new VcapApplication(jsonVcap.application_id, jsonVcap.application_name,
+                jsonVcap.application_uris ?? new List<string>(), jsonVcap.application_version,
+                jsonVcap.cf_api, appLimits, jsonVcap.name, jsonVcap.space_id, jsonVcap.space_name,
+                jsonVcap.uris ?? new List<string>(), jsonVcap.version);
         }
     }
 }
