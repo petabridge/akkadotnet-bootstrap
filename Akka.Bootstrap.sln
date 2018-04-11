@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.Bootstrap.Docker", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.Bootstrap.Docker.Tests", "src\Akka.Bootstrap.Docker.Tests\Akka.Bootstrap.Docker.Tests.csproj", "{0F9B9BC6-9F86-40E8-BA9B-D27BF3AC7970}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.Bootstrap.PCF", "src\Akka.Bootstrap.PCF\Akka.Bootstrap.PCF.csproj", "{EDAB7A80-65A6-47C7-8F71-4DB4B6C5DAF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.Bootstrap.PCF.Tests", "src\Akka.Bootstrap.PCF.Tests\Akka.Bootstrap.PCF.Tests.csproj", "{765987A7-7714-4166-BE14-82033867A03F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0F9B9BC6-9F86-40E8-BA9B-D27BF3AC7970}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F9B9BC6-9F86-40E8-BA9B-D27BF3AC7970}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F9B9BC6-9F86-40E8-BA9B-D27BF3AC7970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDAB7A80-65A6-47C7-8F71-4DB4B6C5DAF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDAB7A80-65A6-47C7-8F71-4DB4B6C5DAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDAB7A80-65A6-47C7-8F71-4DB4B6C5DAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDAB7A80-65A6-47C7-8F71-4DB4B6C5DAF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{765987A7-7714-4166-BE14-82033867A03F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{765987A7-7714-4166-BE14-82033867A03F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{765987A7-7714-4166-BE14-82033867A03F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{765987A7-7714-4166-BE14-82033867A03F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

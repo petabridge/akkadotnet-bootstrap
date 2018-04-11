@@ -40,15 +40,17 @@ namespace Akka.Bootstrap.Docker.Tests
             }
         }
 
-        [Fact]
-        public void ShouldStartIfValidHostnameIsSupplied()
+        [Theory]
+        [InlineData("localhost")]
+        [InlineData("127.0.0.1")]
+        public void ShouldStartIfValidHostnameIsSupplied(string hostName)
         {
             try
             {
-                Environment.SetEnvironmentVariable("CLUSTER_IP", "localhost", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("CLUSTER_IP", hostName, EnvironmentVariableTarget.Process);
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
                 myConfig.HasPath("akka.remote.dot-netty.tcp.public-hostname").Should().BeTrue();
-                myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be("localhost");
+                myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(hostName);
             }
             finally
             {
