@@ -9,7 +9,7 @@ using Akka.Bootstrap.PCF.Serialization;
 using FluentAssertions;
 using Xunit;
 
-namespace Akka.Bootstrap.PCF.Tests
+namespace Akka.Bootstrap.PCF.Tests.Serialization
 {
     public class VcapApplicationSerializationSpecs
     {
@@ -37,6 +37,8 @@ namespace Akka.Bootstrap.PCF.Tests
                   ""version"": ""eec414fe-4016-40ae-bd70-da2e564c0a90""
                  }";
 
+        public static readonly string SampleVcapPortMapping = @"[{external:61045,internal:8080},{external:61046,internal:2222}]";
+
         [Fact(DisplayName = "Should parse VCAP_APPLICATION environment variable correctly")]
         public void ShouldParseVcapApplication()
         {
@@ -59,6 +61,13 @@ namespace Akka.Bootstrap.PCF.Tests
             vcapApp.uris.Count.Should().Be(1);
             vcapApp.uris.Single().Should().Be("helloworld.cfapps.io");
             vcapApp.version.Should().Be("eec414fe-4016-40ae-bd70-da2e564c0a90");
+        }
+
+        [Fact(DisplayName = "Should parse CF_INSTANCE_PORTS environment variable correctly")]
+        public void ShouldParsePortMappings()
+        {
+            var instancePorts = PcfSerializer.ParsePcfPorts(SampleVcapPortMapping);
+            instancePorts.Count.Should().Be(2);
         }
     }
 }

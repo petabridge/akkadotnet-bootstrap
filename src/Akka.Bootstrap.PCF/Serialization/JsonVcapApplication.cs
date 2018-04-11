@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="VcapApplication.cs" company="Petabridge, LLC">
+// <copyright file="JsonVcapApplication.cs" company="Petabridge, LLC">
 //      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
@@ -12,7 +12,7 @@ namespace Akka.Bootstrap.PCF.Serialization
     ///     INTERNAL API.
     ///     JSON representation of the application resource limits in PCF.
     /// </summary>
-    public class Limits
+    public class JsonLimits
     {
         public int disk { get; set; }
         public int fds { get; set; }
@@ -26,14 +26,14 @@ namespace Akka.Bootstrap.PCF.Serialization
     /// <remarks>
     ///     See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html for more details.
     /// </remarks>
-    public class VcapApplication
+    public class JsonVcapApplication
     {
         public string application_id { get; set; }
         public string application_name { get; set; }
         public List<string> application_uris { get; set; }
         public string application_version { get; set; }
         public string cf_api { get; set; }
-        public Limits limits { get; set; }
+        public JsonLimits limits { get; set; }
         public string name { get; set; }
         public string space_id { get; set; }
         public string space_name { get; set; }
