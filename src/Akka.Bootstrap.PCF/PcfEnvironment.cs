@@ -226,7 +226,9 @@ namespace Akka.Bootstrap.PCF
                 .AppendLine($"TMPDIR: {TMPDIR}")
                 .AppendLine($"USER: {USER}");
 
-            return VCAP_APPLICATION.ToString(sb);
+            if(VCAP_APPLICATION != null)
+                return VCAP_APPLICATION.ToString(sb);
+            return sb.ToString();
         }
     }
 }

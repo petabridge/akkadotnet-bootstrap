@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2018 Petabridge®</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PackageReleaseNotes>Initial release of `Akka.Bootstrap.Docker`, which you can read more about here: https://github.com/petabridge/akkadotnet-bootstrap/tree/docker-bootstrap/src/Akka.Bootstrap.Docker</PackageReleaseNotes>
+    <VersionPrefix>0.1.1</VersionPrefix>
+    <PackageReleaseNotes>Added support for `Akka.Bootstrap.PCF`.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
