@@ -16,6 +16,7 @@ namespace Akka.Bootstrap.PCF.Tests
         {
             var pcfEnvironment = PcfEnvironment.Init();
             pcfEnvironment.Should().NotBeNull();
+            pcfEnvironment.ToString().Should().NotBeNullOrEmpty();
         }
     }
 }
