@@ -23,7 +23,7 @@ namespace Akka.Bootstrap.PCF
     /// </remarks>
     public sealed class PcfEnvironment
     {
-        private static readonly Lazy<PcfEnvironment> Instance = new Lazy<PcfEnvironment>(Init);
+        public static readonly Lazy<PcfEnvironment> Instance = new Lazy<PcfEnvironment>(Init);
 
         private PcfEnvironment(IPEndPoint cfInstanceAddr, string cfInstanceGuid, int? cfInstanceIndex,
             IPAddress cfInstanceIp, int? cfInstancePort, IReadOnlyList<PortMapping> cfInstancePorts,
