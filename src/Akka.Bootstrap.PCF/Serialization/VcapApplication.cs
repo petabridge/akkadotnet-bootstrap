@@ -1,9 +1,17 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="VcapApplication.cs" company="Petabridge, LLC">
+//      Copyright (C) 2018 - 2018 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using System.Collections.Generic;
-using System.Text;
 
 namespace Akka.Bootstrap.PCF.Serialization
 {
+    /// <summary>
+    ///     INTERNAL API.
+    ///     JSON representation of the application resource limits in PCF.
+    /// </summary>
     public class Limits
     {
         public int disk { get; set; }
@@ -11,6 +19,13 @@ namespace Akka.Bootstrap.PCF.Serialization
         public int mem { get; set; }
     }
 
+    /// <summary>
+    ///     INTERNAL API.
+    ///     JSON representation of the VCAP_APPLICATION environment variable.
+    /// </summary>
+    /// <remarks>
+    ///     See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html for more details.
+    /// </remarks>
     public class VcapApplication
     {
         public string application_id { get; set; }
