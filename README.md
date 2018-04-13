@@ -5,6 +5,7 @@ Akka.Remote and Akka.Cluster bootstrapping utilities for [Akka.NET](http://getak
 To learn more about a specific runtime environment, please see the following:
 
 * **[Bootstrapping Akka.NET for Docker](src/Akka.Bootstrap.Docker)**
+* **[Bootstrapping Akka.NET for Pivotal Cloud Foundry (PCF)](src/Akka.Bootstrap.PCF)**
 
 ## Building this solution
 To run the build script associated with this solution, execute the following:
