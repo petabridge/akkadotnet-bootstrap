@@ -25,6 +25,13 @@ namespace Akka.Bootstrap.PCF
     {
         public static readonly Lazy<PcfEnvironment> Instance = new Lazy<PcfEnvironment>(Init);
 
+        /// <summary>
+        /// If <c>true</c>, this means that the PCF environment is available.
+        /// Otherwise, we're not running in PCF and the user should assume that none
+        /// of the environment variables supplied on this class are present.
+        /// </summary>
+        public static bool IsRunningPcf => Instance.Value.InPcf;
+
         private PcfEnvironment(IPEndPoint cfInstanceAddr, string cfInstanceGuid, int? cfInstanceIndex,
             IPAddress cfInstanceIp, int? cfInstancePort, IReadOnlyList<PortMapping> cfInstancePorts,
             string home, string lang, int? port, string pwd, string tmpdir, string user,
@@ -45,6 +52,13 @@ namespace Akka.Bootstrap.PCF
             VCAP_APPLICATION = vcapApplication;
             CF_INSTANCE_INTERNAL_IP = cfInstanceInternalIp;
         }
+
+        /// <summary>
+        /// If <c>true</c>, this means that the PCF environment is available.
+        /// Otherwise, we're not running in PCF and the user should assume that none
+        /// of the environment variables supplied on this class are present.
+        /// </summary>
+        public bool InPcf => !string.IsNullOrEmpty(CF_INSTANCE_GUID);
 
         /// <summary>
         ///     The IP and Port of the app instance.
