@@ -18,5 +18,11 @@ namespace Akka.Bootstrap.PCF.Tests
             pcfEnvironment.Should().NotBeNull();
             pcfEnvironment.ToString().Should().NotBeNullOrEmpty();
         }
+
+        [Fact(DisplayName = "Should report that we are not in a PCF environment")]
+        public void ShouldReportWhetherWeAreInPcfOrNot()
+        {
+            PcfEnvironment.IsRunningPcf.Should().BeFalse();
+        }
     }
 }
