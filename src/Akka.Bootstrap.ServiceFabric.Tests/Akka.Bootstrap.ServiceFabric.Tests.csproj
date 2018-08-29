@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Akka.Bootstrap.Docker\Akka.Bootstrap.Docker.csproj" />
+    <ProjectReference Include="..\Akka.Bootstrap.ServiceFabric\Akka.Bootstrap.ServiceFabric.csproj" />
   </ItemGroup>
 
 </Project>
