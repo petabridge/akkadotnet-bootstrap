@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Akka.Remote and Akka.Cluster bootstrapping utilities for Docker.</Description>
+    <Description>Akka.Remote and Akka.Cluster bootstrapping utilities for Windows Azure Service Fabric.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
