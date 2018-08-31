@@ -2,16 +2,27 @@
   <PropertyGroup>
     <Copyright>Copyright © 2018 Petabridge®</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.3</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to [Akka.NET v1.3.6](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.6)
+    <VersionPrefix>0.1.4</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to [Akka.NET v1.3.9](https://github.com/akkadotnet/akka.net/releases/tag/v1.3.6)
+Added a bootstrapper for Service Fabric
+Switch to netstandard2.0
 Added XML-DOCs to NuGet package output.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Label="SourceLink Settings">
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
   <PropertyGroup>
-    <XunitVersion>2.3.0</XunitVersion>
-    <TestSdkVersion>15.3.0</TestSdkVersion>
+    <XunitVersion>2.4.0</XunitVersion>
+    <TestSdkVersion>15.8.0</TestSdkVersion>
   </PropertyGroup>
 </Project>

@@ -17,9 +17,9 @@ namespace Akka.Bootstrap.Docker
     public static class DockerBootstrap
     {
         /// <summary>
-        ///     Extension menthod intended to chain configuration derived from
+        ///     Extension method intended to chain configuration derived from
         ///     Docker-supplied environment variables to the front of the fallback chain,
-        ///     overiding any values that were provided in a built-in HOCON file.
+        ///     overriding any values that were provided in a built-in HOCON file.
         /// </summary>
         /// <param name="input">The current configuration object.</param>
         /// <returns>An updated Config object with <see cref="input" /> chained behind it as a fallback. Immutable.</returns>

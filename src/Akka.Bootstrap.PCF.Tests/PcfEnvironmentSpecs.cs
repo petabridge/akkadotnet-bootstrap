@@ -11,7 +11,7 @@ namespace Akka.Bootstrap.PCF.Tests
 {
     public class PcfEnvironmentSpecs
     {
-        [Fact(DisplayName = "Should still be able to populate the PcfEnvironment withour error outside PCF")]
+        [Fact(DisplayName = "Should still be able to populate the PcfEnvironment without error outside PCF")]
         public void ShouldInitializePcfEnvironmentWithoutErrorsWhenUnpopulated()
         {
             var pcfEnvironment = PcfEnvironment.Init();
