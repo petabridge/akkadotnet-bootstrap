@@ -25,12 +25,12 @@ Fix some spelling errors</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <XunitVersion>2.3.1</XunitVersion>
-    <TestSdkVersion>15.8.0</TestSdkVersion>
+    <XunitVersion>2.4.1</XunitVersion>
+    <TestSdkVersion>15.9.0</TestSdkVersion>
     <NetCoreTestVersion>netcoreapp2.1</NetCoreTestVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NetFrameworkTestVersion>net461</NetFrameworkTestVersion>
-    <AkkaVersion>1.3.10</AkkaVersion>
+    <AkkaVersion>1.3.11</AkkaVersion>
     <SourceLinkVersion>1.0.0-beta-63127-02</SourceLinkVersion>
   </PropertyGroup>
 </Project>
