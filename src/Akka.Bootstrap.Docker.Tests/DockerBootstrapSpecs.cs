@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using Akka.Configuration;
 using FluentAssertions;
 using Xunit;
@@ -80,7 +81,7 @@ namespace Akka.Bootstrap.Docker.Tests
         {
             var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
             myConfig.HasPath("akka.cluster.seed-nodes").Should().BeFalse();
-            myConfig.HasPath("akka.remote.dot-netty.tcp.hostname").Should().BeFalse();
+            myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(Dns.GetHostName());
             myConfig.HasPath("akka.remote.dot-netty.tcp.port").Should().BeFalse();
         }
     }
