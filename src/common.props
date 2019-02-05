@@ -13,6 +13,7 @@ Fix some spelling errors.
 Akka.Bootstrap.Docker Changes**
 - No more dependency on `get-dockerip.sh`. This can now be handled programmatically via the C# inside `Akka.Docker.Bootstrap`.
 - If the `CLUSTER_IP` environment variable is not set, Docker will now automatically resolve the hostname via `Dns.GetHostName` inside the application. This change was made in order to remove the `get-dockerip.sh` dependency, which was causing numerous usability problems for end-users.</PackageReleaseNotes>
+
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>

@@ -10,6 +10,11 @@
     <DocumentationFile>bin\Release\$(NetStandardVersion)\Akka.Bootstrap.Docker.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Akka.Bootstrap.Docker.xml</DocumentationFile>
+  </PropertyGroup>
+
+
   <ItemGroup>
     <PackageReference Include="Akka" Version="$(AkkaVersion)" />
   </ItemGroup>

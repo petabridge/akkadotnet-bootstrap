@@ -5,6 +5,9 @@
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Akka.Remote and Akka.Cluster bootstrapping utilities for Pivotal Cloud Foundry (PCF.)</Description>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Akka.Bootstrap.PCF.xml</DocumentationFile>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\$(NetStandardVersion)\Akka.Bootstrap.PCF.xml</DocumentationFile>
