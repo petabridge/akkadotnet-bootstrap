@@ -1,14 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
+  
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Akka.Remote and Akka.Cluster bootstrapping utilities for Pivotal Cloud Foundry (PCF.)</Description>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.6\Akka.Bootstrap.PCF.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\$(NetStandardVersion)\Akka.Bootstrap.PCF.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.3.6" />
+    <PackageReference Include="Akka" Version="$(AkkaVersion)" />
   </ItemGroup>
+
+  <ItemGroup Label="SourceLink Packages">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(SourceLinkVersion)" PrivateAssets="All"/>
+  </ItemGroup>
+
 </Project>

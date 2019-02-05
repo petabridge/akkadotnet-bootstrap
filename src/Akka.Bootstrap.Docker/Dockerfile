@@ -20,8 +20,6 @@ FROM microsoft/dotnet:2.0-runtime AS runtime
 WORKDIR /app
 RUN ls
 COPY --from=build-env /app/[PATH_TO_YOUR_.CSPROJ]/out ./
-COPY --from=build-env /app/get-dockerip.sh ./get-dockerip.sh
-ENTRYPOINT ["/bin/bash","get-dockerip.sh"]
 
 # Akka.Cluster endpoint
 EXPOSE 5011

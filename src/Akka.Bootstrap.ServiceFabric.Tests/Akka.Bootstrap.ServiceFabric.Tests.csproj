@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
 
-  <PropertyGroup>
+  <PropertyGroup>    
     <TargetFramework>$(NetCoreTestVersion)</TargetFramework>
 
     <IsPackable>false</IsPackable>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Akka.Bootstrap.PCF\Akka.Bootstrap.PCF.csproj" />
+    <ProjectReference Include="..\Akka.Bootstrap.ServiceFabric\Akka.Bootstrap.ServiceFabric.csproj" />
   </ItemGroup>
 
 </Project>
