@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Akka.Actor;
 using Akka.Configuration;
@@ -11,8 +12,13 @@ namespace Akka.Bootstrap.Docker.Sample
     {
         static void Main(string[] args)
         {
+            if (Debugger.IsAttached) // If we're launching running from visual studio, set CLUSTER_IP
+            {
+                Environment.SetEnvironmentVariable("CLUSTER_IP", "localhost");
+            }
+
             var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
-                .BootstrapFromDocker(fallbackHostname:"localhost"); // forces all Docker environment variable substitution
+                .BootstrapFromDocker(); // forces all Docker environment variable substitution
             var actorSystem = ActorSystem.Create("DockerBootstrap", config);
 
             var echo = actorSystem.ActorOf(Props.Create(() => new EchoActor()), "echo");
