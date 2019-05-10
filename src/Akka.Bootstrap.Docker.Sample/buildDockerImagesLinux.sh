@@ -15,14 +15,15 @@ fi
 
 if [ -z $IMAGE_NAME ]; then
 	IMAGE_NAME="akka.docker.boostrap"
-	echo `date`"Using default Docker image name [$IMAGE_NAME]"
+	echo `date`" - Using default Docker image name [$IMAGE_NAME]"
 fi
 
+
 echo "Building project..."
-exec dotnet publish -c Release
+dotnet publish -c Release
 
 LINUX_IMAGE="$IMAGE_NAME:$IMAGE_VERSION-linux"
 LINUX_IMAGE_LATEST="$IMAGE_NAME:latest-linux"
 
-echo ("Creating Docker (Linux) image [$LINUX_IMAGE]...")
-exec docker build . -f Dockerfile-linux -t LINUX_IMAGE  -t LINUX_IMAGE_LATEST
+echo "Creating Docker (Linux) image [$LINUX_IMAGE]..."
+docker build . -f Dockerfile-linux -t $LINUX_IMAGE  -t $LINUX_IMAGE_LATEST
