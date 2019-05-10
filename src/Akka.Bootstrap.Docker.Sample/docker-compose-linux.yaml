@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  seed:
+    image: akka.docker.boostrap:latest-linux
+    hostname: seed1
+    ports:
+      - '0:9110'
+      - '0:4053'
+    environment:
+      CLUSTER_PORT: 4053
+      CLUSTER_IP: "seed1"
+      CLUSTER_SEEDS: "akka.tcp://DockerBootstrap@seed1:4053"
+
+  replica:
+    image: akka.docker.boostrap:latest-linux
+    ports:
+      - '0:9110'
+      - '0:4053'
+    environment:
+      CLUSTER_PORT: 4053
+      CLUSTER_SEEDS: "akka.tcp://DockerBootstrap@seed1:4053"
+    depends_on:
+      - "seed"
