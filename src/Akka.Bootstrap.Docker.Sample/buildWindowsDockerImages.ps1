@@ -7,6 +7,7 @@ param (
 
 Write-Host "Building project..."
 dotnet publish -c Release
+dotnet build-server shutdown
 
 $windowsImage = "{0}:{1}-windows" -f $imageName,$tagVersion
 $windowsImageLatest = "{0}:latest-windows" -f $imageName
