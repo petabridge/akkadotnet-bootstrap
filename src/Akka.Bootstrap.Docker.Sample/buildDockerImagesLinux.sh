@@ -21,6 +21,7 @@ fi
 
 echo "Building project..."
 dotnet publish -c Release
+dotnet build-server shutdown
 
 LINUX_IMAGE="$IMAGE_NAME:$IMAGE_VERSION-linux"
 LINUX_IMAGE_LATEST="$IMAGE_NAME:latest-linux"

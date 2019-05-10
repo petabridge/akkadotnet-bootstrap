@@ -5,6 +5,9 @@ using Akka.Actor;
 using Akka.Configuration;
 using Akka.Event;
 using Akka.Routing;
+using Petabridge.Cmd.Cluster;
+using Petabridge.Cmd.Host;
+using Petabridge.Cmd.Remote;
 
 namespace Akka.Bootstrap.Docker.Sample
 {
@@ -24,7 +27,11 @@ namespace Akka.Bootstrap.Docker.Sample
             var echo = actorSystem.ActorOf(Props.Create(() => new EchoActor()), "echo");
             var router = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "router");
 
-
+            // use PBM so our containers can be interacted with from the host system
+            var pbm = PetabridgeCmd.Get(actorSystem);
+            pbm.RegisterCommandPalette(ClusterCommands.Instance);
+            pbm.RegisterCommandPalette(RemoteCommands.Instance);
+            pbm.Start();
 
             /*
              * Wait until we've joined the cluster before we begin messaging any other nodes.
@@ -34,7 +41,7 @@ namespace Akka.Bootstrap.Docker.Sample
             {
                 actorSystem.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(1), () =>
                 {
-                    router.Tell(count++);
+                    router.Tell(count++, echo);
                 });
             });
 

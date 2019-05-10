@@ -7,9 +7,10 @@ param (
 
 Write-Host "Building project..."
 dotnet publish -c Release
+dotnet build-server shutdown
 
 $windowsImage = "{0}:{1}-windows" -f $imageName,$tagVersion
 $windowsImageLatest = "{0}:latest-windows" -f $imageName
 
 Write-Host ("Creating Docker (Windows) image [{0}]..." -f $windowsImage)
-docker build . -f Dockerfile-windows -t $linuxImage -t $linuxImageLatest
+docker build . -f Dockerfile-windows -t $windowsImage -t $windowsImageLatest
