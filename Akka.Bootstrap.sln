@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.Bootstrap.ServiceFabri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.Bootstrap.ServiceFabric.Tests", "src\Akka.Bootstrap.ServiceFabric.Tests\Akka.Bootstrap.ServiceFabric.Tests.csproj", "{57819593-EB89-4FF9-B752-4B2B8C90EC1D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.Bootstrap.Docker.Sample", "src\Akka.Bootstrap.Docker.Sample\Akka.Bootstrap.Docker.Sample.csproj", "{C7109646-CFEB-4740-8DC8-849385C232F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{57819593-EB89-4FF9-B752-4B2B8C90EC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57819593-EB89-4FF9-B752-4B2B8C90EC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57819593-EB89-4FF9-B752-4B2B8C90EC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7109646-CFEB-4740-8DC8-849385C232F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7109646-CFEB-4740-8DC8-849385C232F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7109646-CFEB-4740-8DC8-849385C232F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7109646-CFEB-4740-8DC8-849385C232F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
