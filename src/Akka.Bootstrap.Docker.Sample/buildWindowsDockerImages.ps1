@@ -8,12 +8,6 @@ param (
 Write-Host "Building project..."
 dotnet publish -c Release
 
-$linuxImage = "{0}:{1}-linux" -f $imageName,$tagVersion
-$linuxImageLatest = "{0}:latest-linux" -f $imageName
-
-Write-Host ("Creating Docker (Linux) image [{0}]..." -f $linuxImage)
-docker build . -f Dockerfile-linux -t $linuxImage -t $linuxImageLatest
-
 $windowsImage = "{0}:{1}-windows" -f $imageName,$tagVersion
 $windowsImageLatest = "{0}:latest-windows" -f $imageName
 
