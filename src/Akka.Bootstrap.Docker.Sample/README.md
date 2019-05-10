@@ -30,10 +30,10 @@ PS> pbm 127.0.0.1:9110
 That command will allow the `pbm` client to connect to the Petabridge.Cmd.Host running inside the `seed` node Docker container, and you can use that do things like monitor or manage the underlying Akka.NET cluster.
 
 ## Linux
-Open a PowerShell to _this directory_ and execute [`buildDockerImagesLinux.sh`](buildDockerImagesLinux.sh), like this:
+Open a PowerShell to _this directory_ and execute [`buildLinuxDockerImages.sh`](buildLinuxDockerImages.sh), like this:
 
 ```
-PS> buildDockerImagesLinux.sh [version] [imageName OPTIONAL]
+PS> buildLinuxDockerImages.sh [version] [imageName OPTIONAL]
 ```
 
 This will build docker and tag two Docker images in your local Windows Docker registry:

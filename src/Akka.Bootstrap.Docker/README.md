@@ -46,3 +46,17 @@ EXPOSE 9110 4053
 
 CMD ["dotnet", "Akka.Bootstrap.Docker.Sample.dll"]
 ```
+
+In our opinion, the easiest way to work with Docker in .NET is to call `dotnet publish` on the application you want to Dockerize and then to simply copy all of the binaries from the `bin/release/[framework]/publish` directory into the working directory of your Docker container. 
+
+This keeps the Dockerfile very tidy and enables developers to take advantage of things like copying local binaries and packages into the container (which the Petabridge team has found to be helpful during dev and test.) 
+
+This is exactly what the [`buildWindowsDockerImages.ps1`](../Akka.Bootstrap.Docker.Sample/buildWindowsDockerImages.ps1) and [`buildLinuxDockerImages.sh`](../Akka.Bootstrap.Docker.Sample/buildLinuxDockerImages.sh) scripts in our sample do.
+
+From there, we recommend using tools like `docker-compose` or Kubernetes to pass in the environment variables expected by `Akka.Bootstrap.Docker` - that way you can form your initial network of Docker containers automatically. 
+
+Here are some relevant examples:
+
+* `docker-compose` - [Akka.Bootstrap.Docker.Sample/docker-compose-windows.yaml](../Akka.Bootstrap.Docker.Sample/docker-compose-windows.yaml)
+* `docker-compose` - [Akka.Bootstrap.Docker.Sample/docker-compose-linux.yaml](../Akka.Bootstrap.Docker.Sample/docker-compose-linux.yaml)
+* `kubernetes` - [Cluster.WebCrawler K8s Service Definitions](https://github.com/petabridge/Cluster.WebCrawler/tree/dev/yaml)
