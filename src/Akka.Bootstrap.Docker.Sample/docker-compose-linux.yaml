@@ -5,7 +5,7 @@ services:
     image: akka.docker.boostrap:latest-linux
     hostname: seed
     ports:
-      - '0:9110'
+      - '9110:9110'
       - '0:4053'
     environment:
       CLUSTER_PORT: 4053
