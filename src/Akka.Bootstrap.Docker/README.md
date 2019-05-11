@@ -9,7 +9,7 @@ This library works with any runtime supported by Akka.NET.
 
 * `CLUSTER_IP` - this value will replace the `akka.remote.dot-netty.tcp.public-hostname` at runtime. If this value is not provided, we will use `Dns.GetHostname()` instead.
 * `CLUSTER_PORT` - the port number that will be used by Akka.Remote for inbound connections.
-* `CLUSTER_SEEDS` - a comma-delimited list of seed node addressed used by Akka.Cluster.
+* `CLUSTER_SEEDS` - a comma-delimited list of seed node addresses used by Akka.Cluster.
 
 ### Using `Akka.Bootstrap.Docker`
 The `Akka.Bootstrap.Docker` NuGet package itself is pretty simple - all it does is expose the `DockerBootstrap` class which gives you the ability to automatically load all of the environment variables we pass in via Docker into your Akka.Remote and Akka.Cluster configuration:
