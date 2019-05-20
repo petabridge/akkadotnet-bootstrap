@@ -14,7 +14,7 @@ if [ -z $IMAGE_VERSION ]; then
 fi
 
 if [ -z $IMAGE_NAME ]; then
-	IMAGE_NAME="akka.docker.boostrap"
+	IMAGE_NAME="akka.bootstrap.docker"
 	echo `date`" - Using default Docker image name [$IMAGE_NAME]"
 fi
 
