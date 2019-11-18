@@ -2,7 +2,7 @@ version: '3'
 
 services:
   seed:
-    image: akka.docker.boostrap:latest-windows
+    image: akka.bootstrap.docker:latest-windows
     hostname: seed
     ports:
       - '9110:9110'
@@ -13,7 +13,7 @@ services:
       CLUSTER_SEEDS: "akka.tcp://DockerBootstrap@seed:4053"
 
   replica1:
-    image: akka.docker.boostrap:latest-windows
+    image: akka.bootstrap.docker:latest-windows
     ports:
       - '0:9110'
       - '0:4053'
@@ -24,7 +24,7 @@ services:
       - "seed"
 
   replica2:
-    image: akka.docker.boostrap:latest-windows
+    image: akka.bootstrap.docker:latest-windows
     ports:
       - '0:9110'
       - '0:4053'
