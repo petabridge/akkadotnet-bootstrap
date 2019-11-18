@@ -2,10 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge®</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.1</VersionPrefix>
-    <PackageReleaseNotes>Update to Akka 1.3.13
-Added [full `Akka.Bootstrap.Docker` code sample](https://github.com/petabridge/akkadotnet-bootstrap/tree/dev/src/Akka.Bootstrap.Docker.Sample)
-Rewrote [`Akka.Bootstrap.Docker` documentation](https://github.com/petabridge/akkadotnet-bootstrap/tree/dev/src/Akka.Bootstrap.Docker)</PackageReleaseNotes>
+    <VersionPrefix>0.2.2</VersionPrefix>
+    <PackageReleaseNotes>Updated all underlying dependencies to Akka.NET latest.</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
