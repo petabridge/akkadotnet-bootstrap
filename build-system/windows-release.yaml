@@ -14,11 +14,11 @@ variables:
   - group: signingSecrets #create this group with SECRET variables `signingUsername` and `signingPassword`
   - group: nugetKeys #create this group with SECRET variables `nugetKey`
   - name: githubConnectionName
-    value: yourConnection #replace this
+    value: Releases 
   - name: projectName
-    value: yourProjectName #replace this
+    value: Akka.Bootstrap
   - name: githubRepositoryName
-    value: yourOrganization/yourRepo #replace this
+    value: petabridge/akkadotnet-bootstrap
 
 steps:
 - task: BatchScript@1
