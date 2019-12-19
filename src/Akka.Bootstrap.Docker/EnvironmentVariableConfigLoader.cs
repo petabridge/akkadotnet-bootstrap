@@ -105,11 +105,11 @@ namespace Akka.Bootstrap.Docker
                 sb.Append($"{set.Key}=");
                 if (set.Count() > 1)
                 {   
-                    sb.Append($"[{String.Join(",", set.OrderBy(y => y.Index).Select(y => y.Value))}]");
+                    sb.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
                 }
                 else
                 {
-                    sb.Append($"{set.First().Value}");
+                    sb.AppendLine($"{set.First().Value}");
                 }
             }
 
