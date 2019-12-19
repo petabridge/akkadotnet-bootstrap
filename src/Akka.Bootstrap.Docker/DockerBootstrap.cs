@@ -37,16 +37,15 @@ namespace Akka.Bootstrap.Docker
         /// </example>
         public static Config BootstrapFromDocker(this Config input, bool assignDefaultHostName = true)
         {
-            return ConfigurationFactory.ParseString(
-                    @"
-                        akka.remote.dot-netty.tcp.hostname=0.0.0.0
-                    "
-                )
+            return ConfigurationFactory.Empty
                 .FromEnvironment()
                 .WithFallback(
                     ConfigurationFactory.ParseString(
                         $@"
-                            akka.remote.dot-netty.tcp.public-hostname={Dns.GetHostName()}
+                            akka.remote.dot-netty.tcp {{
+                                hostname=0.0.0.0
+                                public-hostname={Dns.GetHostName()}
+                            }}
                         "
                     )
                 )
