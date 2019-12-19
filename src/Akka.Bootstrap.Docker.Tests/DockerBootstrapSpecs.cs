@@ -19,7 +19,6 @@ namespace Akka.Bootstrap.Docker.Tests
     public class DockerBootstrapSpecs
     {
         [Theory]
-        [InlineData("[]")]
         [InlineData("akka.tcp://MySys@localhost:9140")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142")]
