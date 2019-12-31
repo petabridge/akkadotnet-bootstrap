@@ -19,7 +19,6 @@ namespace Akka.Bootstrap.Docker.Tests
     public class DockerBootstrapSpecs
     {
         [Theory]
-        [InlineData("[]")]
         [InlineData("akka.tcp://MySys@localhost:9140")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142")]
@@ -83,6 +82,28 @@ namespace Akka.Bootstrap.Docker.Tests
             myConfig.HasPath("akka.cluster.seed-nodes").Should().BeFalse();
             myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(Dns.GetHostName());
             myConfig.HasPath("akka.remote.dot-netty.tcp.port").Should().BeFalse();
+        }
+        
+        [Fact]
+        public void ShouldStartIfValidAkkaConfigurationSuppliedByEnvironmentVariables()
+        {
+            Environment.SetEnvironmentVariable("AKKA__COORDINATED_SHUTDOWN__EXIT_CLR", "on", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__ACTOR__PROVIDER", "cluster", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__REMOTE__DOT_NETTY__TCP__HOSTNAME", "127.0.0.1", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__REMOTE__DOT_NETTY__TCP__PUBLIC_HOSTNAME", "example.local", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__REMOTE__DOT_NETTY__TCP__PORT", "2559", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__0", "demo", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__1", "test", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__2", "backup", EnvironmentVariableTarget.Process);
+
+            var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
+            
+            myConfig.GetBoolean("akka.coordinated-shutdown.exit-clr").Should().BeTrue();
+            myConfig.GetString("akka.actor.provider").Should().Be("cluster");
+            myConfig.GetString("akka.remote.dot-netty.tcp.hostname").Should().Be("127.0.0.1");
+            myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be("example.local");
+            myConfig.GetInt("akka.remote.dot-netty.tcp.port").Should().Be(2559);
+            myConfig.GetStringList("akka.cluster.roles").Should().BeEquivalentTo(new [] { "demo", "test", "backup" });
         }
     }
 }

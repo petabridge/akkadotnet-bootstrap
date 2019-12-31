@@ -5,8 +5,13 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Akka.Configuration;
 
 namespace Akka.Bootstrap.Docker
@@ -32,48 +37,21 @@ namespace Akka.Bootstrap.Docker
         /// </example>
         public static Config BootstrapFromDocker(this Config input, bool assignDefaultHostName = true)
         {
-            /*
-             * Trim any leading or trailing whitespace since that can cause problems
-             * with the URI / IP parsing that happens in the next stage
-             */
-            var clusterIp = Environment.GetEnvironmentVariable("CLUSTER_IP")?.Trim();
-            var clusterPort = Environment.GetEnvironmentVariable("CLUSTER_PORT")?.Trim();
-            var clusterSeeds = Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim();
-
-            if (string.IsNullOrEmpty(clusterIp) && assignDefaultHostName)
-            {
-                clusterIp = Dns.GetHostName();
-                Console.WriteLine($"[Docker-Bootstrap] Environment variable CLUSTER_IP was not set." +
-                                  $"Defaulting to local hostname [{clusterIp}] for remote addressing.");
-            }
-
-            // Don't have access to Akka.NET ILoggingAdapter yet, since ActorSystem isn't started.
-            Console.WriteLine($"[Docker-Bootstrap] IP={clusterIp}");
-            Console.WriteLine($"[Docker-Bootstrap] PORT={clusterPort}");
-            Console.WriteLine($"[Docker-Bootstrap] SEEDS={clusterSeeds}");
-
-
-            if (!string.IsNullOrEmpty(clusterIp))
-                input = ConfigurationFactory.ParseString("akka.remote.dot-netty.tcp.hostname=0.0.0.0" +
-                                                         Environment.NewLine +
-                                                         "akka.remote.dot-netty.tcp.public-hostname=" + clusterIp)
-                    .WithFallback(input);
-
-            if (!string.IsNullOrEmpty(clusterPort) && int.TryParse(clusterPort, out var portNum))
-                input = ConfigurationFactory.ParseString("akka.remote.dot-netty.tcp.port=" + portNum)
-                    .WithFallback(input);
-
-            if (!string.IsNullOrEmpty(clusterSeeds))
-            {
-                var seeds = clusterSeeds.Split(',');
-                var injectedClusterConfigString = seeds.Aggregate("akka.cluster.seed-nodes = [",
-                    (current, seed) => current + @"""" + seed + @""", ");
-                injectedClusterConfigString += "]";
-                input = ConfigurationFactory.ParseString(injectedClusterConfigString)
-                    .WithFallback(input);
-            }
-
-            return input;
+            return ConfigurationFactory.Empty
+                .FromEnvironment()
+                .WithFallback(
+                    ConfigurationFactory.ParseString(
+                        $@"
+                            akka.remote.dot-netty.tcp {{
+                                hostname=0.0.0.0
+                                public-hostname={Dns.GetHostName()}
+                            }}
+                        "
+                    )
+                )
+                .WithFallback(
+                    input
+                );
         }
     }
 }
