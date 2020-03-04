@@ -11,6 +11,41 @@ This library works with any runtime supported by Akka.NET.
 * `CLUSTER_PORT` - the port number that will be used by Akka.Remote for inbound connections.
 * `CLUSTER_SEEDS` - a comma-delimited list of seed node addresses used by Akka.Cluster. Here's [an example](https://github.com/petabridge/Cluster.WebCrawler/blob/9f854ff2bfb34464769f562936183ea7719da4ea/yaml/k8s-tracker-service.yaml#L46-L47).
 
+### Using Environment Variables to Configure Akka.NET
+In addition to the standardized environment variables listed above, the `Akka.Bootstrap.Docker` NuGet package can also parse Akka.NET configuration from environment variables.  In order for the package to map environment variables to a HOCON entry, the name of the environment variable must adhere to the following conventions:
+
+* Full stops (`.`) in the HOCON path are replaced with two underscores (`__`)
+* Hyphens (`-`) in the HOCON path are replaced with one underscore (`_`)
+* For an array based HOCON entry, the environment variable should be suffixed by two underscores and the index of the entry within the array (`__0`, `__1`, `__2`, etc. ).
+
+As an example, the following list of environment variables:
+
+```
+AKKA__COORDINATED_SHUTDOWN__EXIT_CLR="on"
+AKKA__ACTOR__PROVIDER="cluster"
+AKKA__REMOTE__DOT_NETTY__TCP__HOSTNAME="127.0.0.1"
+AKKA__REMOTE__DOT_NETTY__TCP__PUBLIC_HOSTNAME="example.local"
+AKKA__REMOTE__DOT_NETTY__TCP__PORT="2559"
+AKKA__CLUSTER__ROLES__0="demo"
+AKKA__CLUSTER__ROLES__1="test"
+AKKA__CLUSTER__ROLES__2="backup"
+```
+
+will produce a HOCON structure of:
+
+```
+akka {
+    coordinated_shutdown.exit_clr = "on"
+    actor.provider = "cluster"
+    remote.dot_netty.tcp {
+        hostname = "127.0.0.1"
+        public_hostname = "example.local"
+        port = "2559"
+    }
+    cluster.roles = [ "demo", "test", "backup" ]
+}
+```
+
 ### Using `Akka.Bootstrap.Docker`
 The `Akka.Bootstrap.Docker` NuGet package itself is pretty simple - all it does is expose the `DockerBootstrap` class which gives you the ability to automatically load all of the environment variables we pass in via Docker into your Akka.Remote and Akka.Cluster configuration:
 
