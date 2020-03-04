@@ -20,16 +20,16 @@ namespace Akka.Bootstrap.Docker.Tests
     public class DockerBootstrapSpecs
     {
         [Theory]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\"]")]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\"]")]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\", \"akka.tcp://MySys@localhost:9142\"]")]
+        [InlineData("\"akka.tcp://MySys@localhost:9140\"")]
+        [InlineData("\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\"")]
+        [InlineData("\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\", \"akka.tcp://MySys@localhost:9142\"")]
         public void ShouldStartIfValidSeedNodesIfSupplied(string seedNodes)
         {
             try
             {
                 Environment.SetEnvironmentVariable("CLUSTER_SEEDS", seedNodes, EnvironmentVariableTarget.Process);
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
-                Config expected = $"array={seedNodes}";
+                Config expected = $"array=[{seedNodes}]";
 
                 myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
                 var seeds = myConfig.GetStringList("akka.cluster.seed-nodes");

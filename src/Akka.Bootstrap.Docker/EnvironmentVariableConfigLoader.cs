@@ -84,7 +84,7 @@ namespace Akka.Bootstrap.Docker
                                 public-hostname={Dns.GetHostName()}
                             }}");
             if (environmentConfig.HasPath("environment.seed-nodes"))
-                defaultValues.AppendLine($"akka.cluster.seed-nodes={environmentConfig.GetString("environment.seed-nodes")}");
+                defaultValues.AppendLine($"akka.cluster.seed-nodes=[{environmentConfig.GetString("environment.seed-nodes")}]");
 
             var entries = GetEnvironmentVariables()
                 .OrderByDescending(x => x.Depth)
