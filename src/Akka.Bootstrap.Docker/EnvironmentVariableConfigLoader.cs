@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Akka.Configuration;
+using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
