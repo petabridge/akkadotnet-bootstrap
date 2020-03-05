@@ -79,10 +79,9 @@ namespace Akka.Bootstrap.Docker
             var environmentConfig = HoconConfigurationFactory.FromResource<AssemblyMarker>(DefaultConfigResource);
             var defaultValues = new StringBuilder();
             defaultValues.AppendLine($@"
-                            akka.remote.dot-netty.tcp {{
-                                hostname=0.0.0.0
-                                public-hostname={Dns.GetHostName()}
-                            }}");
+                    akka.remote.dot-netty.tcp.hostname=0.0.0.0
+                    akka.remote.dot-netty.tcp.public-hostname={Dns.GetHostName()}");
+
             if (environmentConfig.HasPath("environment.seed-nodes"))
                 defaultValues.AppendLine($"akka.cluster.seed-nodes={environmentConfig.GetString("environment.seed-nodes")}");
 

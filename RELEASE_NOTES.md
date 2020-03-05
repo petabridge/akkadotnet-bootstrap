@@ -1,3 +1,2 @@
-#### 0.3.0 December 31 2019 ####
-* Updated all underlying dependencies to Akka.NET latest.
-* Added [support for automatically loading environment variables into HOCON via Akka.Bootstrap.Docker](https://github.com/petabridge/akkadotnet-bootstrap/issues/62).
+#### 0.4.0-rc1 March 04 2020 ####
+* Upgraded to Akka.NET v1.4.1-rc1 and used native environment variable substitution from HOCON
