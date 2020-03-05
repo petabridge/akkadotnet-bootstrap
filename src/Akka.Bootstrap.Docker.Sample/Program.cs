@@ -5,6 +5,7 @@ using Akka.Actor;
 using Akka.Configuration;
 using Akka.Event;
 using Akka.Routing;
+using Hocon;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
@@ -20,7 +21,7 @@ namespace Akka.Bootstrap.Docker.Sample
                 Environment.SetEnvironmentVariable("CLUSTER_IP", "localhost");
             }
 
-            var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
+            var config = HoconConfigurationFactory.Default()
                 .BootstrapFromDocker(); // forces all Docker environment variable substitution
             var actorSystem = ActorSystem.Create("DockerBootstrap", config);
 

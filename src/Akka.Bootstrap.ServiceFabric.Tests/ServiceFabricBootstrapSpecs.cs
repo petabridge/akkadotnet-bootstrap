@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Akka.Configuration;
+using Hocon;
 using FluentAssertions;
 using Xunit;
 

@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2015-2019 Petabridge®</Copyright>
+    <Copyright>Copyright © 2015-2020 Petabridge®</Copyright>
     <Authors>Petabridge</Authors>
     <VersionPrefix>0.4.0</VersionPrefix>
     <PackageReleaseNotes>Upgraded to Akka.NET v1.4.1-rc1 and used native environment variable substitution from HOCON</PackageReleaseNotes>
