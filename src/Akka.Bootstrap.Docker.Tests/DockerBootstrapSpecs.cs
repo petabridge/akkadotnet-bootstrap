@@ -43,6 +43,46 @@ namespace Akka.Bootstrap.Docker.Tests
         }
 
         [Theory]
+        [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141")]
+        [InlineData("akka.tcp://MySys@localhost:9140, \"akka.tcp://MySys@localhost:9141\"")]
+        [InlineData("\"akka.tcp://MySys@localhost:9140\", akka.tcp://MySys@localhost:9141")]
+        [InlineData("[akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141]")]
+        [InlineData("[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\"]")]
+        public void ToProperHoconArray_ShouldHandleAllPossibleInput(string input)
+        {
+            Config config = $"array={input.ToProperHoconArray(true)}";
+            config.GetStringList("array").Should().BeEquivalentTo(new[] { "akka.tcp://MySys@localhost:9140", "akka.tcp://MySys@localhost:9141" });
+        }
+
+        [Theory]
+        [InlineData("normal", "normal")]
+        [InlineData("nor.mal", "nor.mal")]
+        [InlineData("nor:-\\mal", "\"nor:-\\mal\"")]
+        [InlineData("nor:-\nmal", "\"\"\"nor:-\nmal\"\"\"")]
+        public void ToSafeHoconString_ShouldHandleAllPossibleInput(string input, string expected)
+        {
+            input.ToSafeHoconString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void GetConfig_and_FromEnvironment_ShouldBeEqual()
+        {
+            try
+            {
+                Environment.SetEnvironmentVariable("CLUSTER_IP", "10.0.0.1", EnvironmentVariableTarget.Process);
+
+                var config1 = ConfigurationFactory.Empty.FromEnvironment();
+                var config2 = EnvironmentVariableConfigLoader.GetConfig();
+                config1.Should().Equals(config2);
+            }
+            finally
+            {
+                // clean the environment variable up afterwards
+                Environment.SetEnvironmentVariable("CLUSTER_IP", null);
+            }
+        }
+
+        [Theory]
         [InlineData("localhost")]
         [InlineData("127.0.0.1")]
         public void ShouldStartIfValidHostnameIsSupplied(string hostName)

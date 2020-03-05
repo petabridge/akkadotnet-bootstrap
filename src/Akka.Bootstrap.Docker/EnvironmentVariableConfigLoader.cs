@@ -64,24 +64,29 @@ namespace Akka.Bootstrap.Docker
             if (source.First() == '[' && source.Last() == ']')
                 source = source.Substring(1, source.Length - 2);
             else if (!isArray && (source.First() != '[' || source.Last() != ']'))
-                return source.ToSafeHoconString();
+                return source.Trim().ToSafeHoconString();
 
             var stringArray = source.Split(',');
             var sb = new StringBuilder("[\n");
             foreach(var value in stringArray)
             {
-                sb.AppendLine(value.ToSafeHoconString());
+                sb.AppendLine(value.Trim().ToSafeHoconString());
             }
-            sb.AppendLine("]");
+            sb.AppendLine("\n]");
             return sb.ToString();
         }
 
         public static string ToSafeHoconString(this string value)
         {
-            if (value.NeedQuotes())
-                return $"\"{value}\"";
+            // maybe a valid hocon string, we don't know, we're not fully parsing this,
+            // so we're not taking any responsibility
+            if (value.First() == '"' && value.Last() == '"')
+                return value;
+
             if (value.NeedTripleQuotes())
                 return $"\"\"\"{value}\"\"\"";
+            if (value.NeedQuotes())
+                return $"\"{value}\"";
             else
                 return value;
         }
