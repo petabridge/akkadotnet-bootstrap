@@ -29,7 +29,7 @@ namespace Akka.Bootstrap.Docker.Tests
                 Environment.SetEnvironmentVariable("CLUSTER_SEEDS", seedNodes, EnvironmentVariableTarget.Process);
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
                 myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
-                var seeds = myConfig.GetStringList("akka.cluster.seed-nodes");
+                var seeds = myConfig.GetStringList("akka.cluster.seed-nodes").Select(x => x.Trim());
                 seeds.Should().BeEquivalentTo(seedNodes.Split(",").Select(x => x.Trim()));
             }
             finally
