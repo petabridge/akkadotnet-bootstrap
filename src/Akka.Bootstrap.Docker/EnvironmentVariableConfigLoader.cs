@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Akka.Configuration;
+using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
@@ -113,6 +114,8 @@ namespace Akka.Bootstrap.Docker
                 }
             }
 
+            if(sb.Length == 0)
+                return Config.Empty;
             var config = ConfigurationFactory.ParseString(sb.ToString());
 
             return config;

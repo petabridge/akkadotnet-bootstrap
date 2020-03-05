@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Akka.Configuration;
+using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
