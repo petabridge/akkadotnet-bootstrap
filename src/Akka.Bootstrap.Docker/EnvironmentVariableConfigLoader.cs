@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Akka.Configuration;
-using System.Net;
-using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
@@ -21,8 +19,6 @@ namespace Akka.Bootstrap.Docker
     /// </summary>
     public static class EnvironmentVariableConfigLoader
     {
-        private const string DefaultConfigResource = "Akka.Bootstrap.Docker.Docker.Environment.conf";
-
         private static IEnumerable<EnvironmentVariableConfigEntrySource> GetEnvironmentVariables()
         {
             // Currently, exclude environment variables that do not start with "AKKA__"
@@ -31,10 +27,33 @@ namespace Akka.Bootstrap.Docker
             // to other non "AKKA__" variables.
             bool UseAllEnvironmentVariables = false;
 
+            // List of environment variable mappings that do not follow the "AKKA__" convention.
+            // We are currently supporting these out of convenience, and may choose to officially
+            // create a set of aliases in the future.  Doing so would allow envvar configuration
+            // to be less verbose but might perpetuate confusion as to source of truth for keys.
+            Dictionary<string, string> ExistingMappings = new Dictionary<string, string>() 
+            {
+                { "CLUSTER_IP", "akka.remote.dot-netty.tcp.public-hostname" },
+                { "CLUSTER_PORT", "akka.remote.dot-netty.tcp.port" },
+                { "CLUSTER_SEEDS", "akka.cluster.seed-nodes" }
+            };
+
+            // Identify environment variable mappings that are expected to be lists
+            string[] ExistingMappingLists = new string[] { "CLUSTER_SEEDS" };
+
             foreach (DictionaryEntry set in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process))
             {
                 var key = set.Key.ToString();
                 var isList = false;
+
+                if (ExistingMappings.TryGetValue(key, out var mappedKey))
+                {
+                    isList = ExistingMappingLists.Contains(key);
+
+                    // Format the key to appear as if it were an environment variable
+                    // in the "AKKA__" format
+                    key = mappedKey.ToUpper().Replace(".", "__").Replace("-", "_");
+                }
 
                 if (!UseAllEnvironmentVariables)
                 if (!key.StartsWith("AKKA__", StringComparison.OrdinalIgnoreCase))
@@ -74,36 +93,29 @@ namespace Akka.Bootstrap.Docker
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Config FromEnvironment(this Config _)
+        public static Config FromEnvironment(this Config input)
         {
-            var environmentConfig = HoconConfigurationFactory.FromResource<AssemblyMarker>(DefaultConfigResource);
-            var defaultValues = new StringBuilder();
-            defaultValues.AppendLine($@"
-                            akka.remote.dot-netty.tcp {{
-                                hostname=0.0.0.0
-                                public-hostname={Dns.GetHostName()}
-                            }}");
-            if (environmentConfig.HasPath("environment.seed-nodes"))
-                defaultValues.AppendLine($"akka.cluster.seed-nodes=[{environmentConfig.GetString("environment.seed-nodes")}]");
-
             var entries = GetEnvironmentVariables()
                 .OrderByDescending(x => x.Depth)
                 .GroupBy(x => x.Key);
 
+            StringBuilder sb = new StringBuilder();
             foreach (var set in entries)
             {
-                defaultValues.Append($"{set.Key}=");
+                sb.Append($"{set.Key}=");
                 if (set.Count() > 1)
-                {
-                    defaultValues.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
+                {   
+                    sb.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
                 }
                 else
                 {
-                    defaultValues.AppendLine($"{set.First().Value}");
+                    sb.AppendLine($"{set.First().Value}");
                 }
             }
 
-            return environmentConfig.WithFallback(HoconConfigurationFactory.ParseString(defaultValues.ToString()));
+            var config = ConfigurationFactory.ParseString(sb.ToString());
+
+            return config;
         }
     }
 

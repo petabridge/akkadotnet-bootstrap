@@ -14,14 +14,6 @@
     <DocumentationFile>bin\Release\netstandard1.6\Akka.Bootstrap.Docker.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Docker.Environment.conf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Docker.Environment.conf" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="$(AkkaVersion)" />
