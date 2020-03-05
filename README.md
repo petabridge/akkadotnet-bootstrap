@@ -25,4 +25,4 @@ If you need any information on the supported commands, please execute the `build
 
 This build script is powered by [FAKE](https://fake.build/); please see their API documentation should you need to make any changes to the [`build.fsx`](build.fsx) file.
 
-This library is maintained by Petabridge®. Copyright 2018.
+This library is maintained by Petabridge®. Copyright 2015-2020.

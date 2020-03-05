@@ -1,2 +1,3 @@
-#### 0.4.0-rc1 March 04 2020 ####
-* Upgraded to Akka.NET v1.4.1-rc1 and used native environment variable substitution from HOCON
+#### 0.4.0-rc2 March 05 2020 ####
+* [Array handling rollback and improvements](https://github.com/petabridge/akkadotnet-bootstrap/pull/78)
+* Restores startup and diagnostic logging from v0.2.2
