@@ -21,9 +21,8 @@ namespace Akka.Bootstrap.Docker
     /// </summary>
     public static class EnvironmentVariableConfigLoader
     {
-        private const string DefaultConfigResource = "Akka.Bootstrap.Docker.Docker.Environment.conf";
 
-        private static IEnumerable<EnvironmentVariableConfigEntrySource> GetEnvironmentVariables()
+        private static IEnumerable<KeyValuePair<string, string>> GetEnvironmentVariables()
         {
             // Currently, exclude environment variables that do not start with "AKKA__"
             // We can implement variable substitution at a later stage which would allow
@@ -34,7 +33,6 @@ namespace Akka.Bootstrap.Docker
             foreach (DictionaryEntry set in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process))
             {
                 var key = set.Key.ToString();
-                var isList = false;
 
                 if (!UseAllEnvironmentVariables)
                 if (!key.StartsWith("AKKA__", StringComparison.OrdinalIgnoreCase))
@@ -45,29 +43,63 @@ namespace Akka.Bootstrap.Docker
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                // Ideally, lists should be passed through in an indexed format.
-                // However, we can allow for lists to be passed in as array format.
-                // Otherwise, we must format the string as an array.
-                if (isList)
-                {
-                    if (value.First() != '[' || value.Last() != ']') 
-                    {
-                        var values = value.Split(',').Select(x => x.Trim());
-                        value = $"[\" {String.Join("\",\"", values)} \"]";
-                    } 
-                    else if (String.IsNullOrEmpty(value.Substring(1, value.Length - 2).Trim()))
-                    {
-                        value = "[]";
-                    }
-                }
-
-                yield return EnvironmentVariableConfigEntrySource.Create(
-                    key.ToLower().ToString(), 
-                    value
-                );
+                yield return new KeyValuePair<string, string>(
+                    key.Replace("__", ".").Replace("_", "-").ToLower(), 
+                    value.ToProperHoconArray());
             }
         }
-        
+
+        // Ideally, lists should be passed through in an indexed format.
+        // However, we can allow for lists to be passed in as array format.
+        // Otherwise, we must format the string as an array.
+        public static string ToProperHoconArray(this string source, bool isArray = false)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            source = source.Trim();
+            if (string.IsNullOrWhiteSpace(source))
+                return string.Empty;
+
+            if (source.First() == '[' && source.Last() == ']')
+                source = source.Substring(1, source.Length - 2);
+            else if (!isArray && (source.First() != '[' || source.Last() != ']'))
+                return source.ToSafeHoconString();
+
+            var stringArray = source.Split(',');
+            var sb = new StringBuilder("[\n");
+            foreach(var value in stringArray)
+            {
+                sb.AppendLine(value.ToSafeHoconString());
+            }
+            sb.AppendLine("]");
+            return sb.ToString();
+        }
+
+        public static string ToSafeHoconString(this string value)
+        {
+            if (value.NeedQuotes())
+                return $"\"{value}\"";
+            if (value.NeedTripleQuotes())
+                return $"\"\"\"{value}\"\"\"";
+            else
+                return value;
+        }
+
+        public static Config GetConfig()
+        {
+            var sb = new StringBuilder();
+            foreach (var kvp in GetEnvironmentVariables())
+                sb.AppendLine($"{kvp.Key}={kvp.Value}");
+
+            return sb.Length == 0 ? Config.Empty : HoconConfigurationFactory.ParseString(sb.ToString());
+        }
+
+        public static Config WithEnvironmentFallback(this Config config)
+        {
+            return config.WithFallback(GetConfig());
+        }
+
         /// <summary>
         /// Load AKKA configuration from the environment variables that are 
         /// accessible from the current process.
@@ -76,33 +108,7 @@ namespace Akka.Bootstrap.Docker
         /// <returns></returns>
         public static Config FromEnvironment(this Config _)
         {
-            var environmentConfig = HoconConfigurationFactory.FromResource<AssemblyMarker>(DefaultConfigResource);
-            var defaultValues = new StringBuilder();
-            defaultValues.AppendLine($@"
-                    akka.remote.dot-netty.tcp.hostname=0.0.0.0
-                    akka.remote.dot-netty.tcp.public-hostname={Dns.GetHostName()}");
-
-            if (environmentConfig.HasPath("environment.seed-nodes"))
-                defaultValues.AppendLine($"akka.cluster.seed-nodes={environmentConfig.GetString("environment.seed-nodes")}");
-
-            var entries = GetEnvironmentVariables()
-                .OrderByDescending(x => x.Depth)
-                .GroupBy(x => x.Key);
-
-            foreach (var set in entries)
-            {
-                defaultValues.Append($"{set.Key}=");
-                if (set.Count() > 1)
-                {
-                    defaultValues.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
-                }
-                else
-                {
-                    defaultValues.AppendLine($"{set.First().Value}");
-                }
-            }
-
-            return environmentConfig.WithFallback(HoconConfigurationFactory.ParseString(defaultValues.ToString()));
+            return GetConfig();
         }
     }
 

@@ -20,16 +20,16 @@ namespace Akka.Bootstrap.Docker.Tests
     public class DockerBootstrapSpecs
     {
         [Theory]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\"]")]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\"]")]
-        [InlineData("[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\", \"akka.tcp://MySys@localhost:9142\"]")]
+        [InlineData("akka.tcp://MySys@localhost:9140")]
+        [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141")]
+        [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142")]
         public void ShouldStartIfValidSeedNodesIfSupplied(string seedNodes)
         {
             try
             {
                 Environment.SetEnvironmentVariable("CLUSTER_SEEDS", seedNodes, EnvironmentVariableTarget.Process);
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
-                Config expected = $"array={seedNodes}";
+                Config expected = $"array={seedNodes.ToProperHoconArray(true)}";
 
                 myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
                 var seeds = myConfig.GetStringList("akka.cluster.seed-nodes");
@@ -100,6 +100,7 @@ namespace Akka.Bootstrap.Docker.Tests
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__0", "demo", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__1", "test", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__2", "backup", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("AKKA__ARRAY", "[demo, test, backup]", EnvironmentVariableTarget.Process);
 
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
 
@@ -109,6 +110,7 @@ namespace Akka.Bootstrap.Docker.Tests
                 myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be("example.local");
                 myConfig.GetInt("akka.remote.dot-netty.tcp.port").Should().Be(2559);
                 myConfig.GetStringList("akka.cluster.roles").Should().BeEquivalentTo(new[] { "demo", "test", "backup" });
+                myConfig.GetStringList("akka.array").Should().BeEquivalentTo(new[] { "demo", "test", "backup" });
             }
             finally
             {
@@ -120,6 +122,7 @@ namespace Akka.Bootstrap.Docker.Tests
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__0", null);
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__1", null);
                 Environment.SetEnvironmentVariable("AKKA__CLUSTER__ROLES__2", null);
+                Environment.SetEnvironmentVariable("AKKA__ARRAY", null);
             }
         }
     }
