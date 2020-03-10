@@ -1,3 +1,2 @@
-#### 0.4.0-rc2 March 05 2020 ####
-* [Array handling rollback and improvements](https://github.com/petabridge/akkadotnet-bootstrap/pull/78)
-* Restores startup and diagnostic logging from v0.2.2
+#### 0.4.0-rc3 March 10 2020 ####
+* Upgraded to [Akka.NET v1.4.1-rc3](https://getakka.net/community/whats-new/akkadotnet-v1.4.html)
