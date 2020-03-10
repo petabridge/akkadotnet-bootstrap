@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Akka.Configuration;
-using System.Net;
-using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
@@ -21,8 +19,7 @@ namespace Akka.Bootstrap.Docker
     /// </summary>
     public static class EnvironmentVariableConfigLoader
     {
-
-        private static IEnumerable<KeyValuePair<string, string>> GetEnvironmentVariables()
+        private static IEnumerable<EnvironmentVariableConfigEntrySource> GetEnvironmentVariables()
         {
             // Currently, exclude environment variables that do not start with "AKKA__"
             // We can implement variable substitution at a later stage which would allow
@@ -30,9 +27,33 @@ namespace Akka.Bootstrap.Docker
             // to other non "AKKA__" variables.
             bool UseAllEnvironmentVariables = false;
 
+            // List of environment variable mappings that do not follow the "AKKA__" convention.
+            // We are currently supporting these out of convenience, and may choose to officially
+            // create a set of aliases in the future.  Doing so would allow envvar configuration
+            // to be less verbose but might perpetuate confusion as to source of truth for keys.
+            Dictionary<string, string> ExistingMappings = new Dictionary<string, string>() 
+            {
+                { "CLUSTER_IP", "akka.remote.dot-netty.tcp.public-hostname" },
+                { "CLUSTER_PORT", "akka.remote.dot-netty.tcp.port" },
+                { "CLUSTER_SEEDS", "akka.cluster.seed-nodes" }
+            };
+
+            // Identify environment variable mappings that are expected to be lists
+            string[] ExistingMappingLists = new string[] { "CLUSTER_SEEDS" };
+
             foreach (DictionaryEntry set in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process))
             {
                 var key = set.Key.ToString();
+                var isList = false;
+
+                if (ExistingMappings.TryGetValue(key, out var mappedKey))
+                {
+                    isList = ExistingMappingLists.Contains(key);
+
+                    // Format the key to appear as if it were an environment variable
+                    // in the "AKKA__" format
+                    key = mappedKey.ToUpper().Replace(".", "__").Replace("-", "_");
+                }
 
                 if (!UseAllEnvironmentVariables)
                 if (!key.StartsWith("AKKA__", StringComparison.OrdinalIgnoreCase))
@@ -43,77 +64,60 @@ namespace Akka.Bootstrap.Docker
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                yield return new KeyValuePair<string, string>(
-                    key.Replace("__", ".").Replace("_", "-").ToLower(), 
-                    value.ToProperHoconArray());
+                // Ideally, lists should be passed through in an indexed format.
+                // However, we can allow for lists to be passed in as array format.
+                // Otherwise, we must format the string as an array.
+                if (isList)
+                {
+                    if (value.First() != '[' || value.Last() != ']') 
+                    {
+                        var values = value.Split(',').Select(x => x.Trim());
+                        value = $"[\" {String.Join("\",\"", values)} \"]";
+                    } 
+                    else if (String.IsNullOrEmpty(value.Substring(1, value.Length - 2).Trim()))
+                    {
+                        value = "[]";
+                    }
+                }
+
+                yield return EnvironmentVariableConfigEntrySource.Create(
+                    key.ToLower().ToString(), 
+                    value
+                );
             }
         }
-
-        // Ideally, lists should be passed through in an indexed format.
-        // However, we can allow for lists to be passed in as array format.
-        // Otherwise, we must format the string as an array.
-        public static string ToProperHoconArray(this string source, bool isArray = false)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            source = source.Trim();
-            if (string.IsNullOrWhiteSpace(source))
-                return string.Empty;
-
-            if (source.First() == '[' && source.Last() == ']')
-                source = source.Substring(1, source.Length - 2);
-            else if (!isArray && (source.First() != '[' || source.Last() != ']'))
-                return source.Trim().ToSafeHoconString();
-
-            var stringArray = source.Split(',');
-            var sb = new StringBuilder("[\n");
-            foreach(var value in stringArray)
-            {
-                sb.AppendLine(value.Trim().ToSafeHoconString());
-            }
-            sb.AppendLine("\n]");
-            return sb.ToString();
-        }
-
-        public static string ToSafeHoconString(this string value)
-        {
-            // maybe a valid hocon string, we don't know, we're not fully parsing this,
-            // so we're not taking any responsibility
-            if (value.First() == '"' && value.Last() == '"')
-                return value;
-
-            if (value.NeedTripleQuotes())
-                return $"\"\"\"{value}\"\"\"";
-            if (value.NeedQuotes())
-                return $"\"{value}\"";
-            else
-                return value;
-        }
-
-        public static Config GetConfig()
-        {
-            var sb = new StringBuilder();
-            foreach (var kvp in GetEnvironmentVariables())
-                sb.AppendLine($"{kvp.Key}={kvp.Value}");
-
-            return sb.Length == 0 ? Config.Empty : HoconConfigurationFactory.ParseString(sb.ToString());
-        }
-
-        public static Config WithEnvironmentFallback(this Config config)
-        {
-            return config.WithFallback(GetConfig());
-        }
-
+        
         /// <summary>
         /// Load AKKA configuration from the environment variables that are 
         /// accessible from the current process.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Config FromEnvironment(this Config _)
+        public static Config FromEnvironment(this Config input)
         {
-            return GetConfig();
+            var entries = GetEnvironmentVariables()
+                .OrderByDescending(x => x.Depth)
+                .GroupBy(x => x.Key);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var set in entries)
+            {
+                sb.Append($"{set.Key}=");
+                if (set.Count() > 1)
+                {   
+                    sb.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
+                }
+                else
+                {
+                    sb.AppendLine($"{set.First().Value}");
+                }
+            }
+
+            if(sb.Length == 0)
+                return Config.Empty;
+            var config = ConfigurationFactory.ParseString(sb.ToString());
+
+            return config;
         }
     }
 

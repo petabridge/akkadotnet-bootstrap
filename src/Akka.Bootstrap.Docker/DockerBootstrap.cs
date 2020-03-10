@@ -5,10 +5,14 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Akka.Configuration;
-using Hocon;
 
 namespace Akka.Bootstrap.Docker
 {
@@ -18,8 +22,6 @@ namespace Akka.Bootstrap.Docker
     /// </summary>
     public static class DockerBootstrap
     {
-        private const string DefaultConfigResource = "Akka.Bootstrap.Docker.Docker.Environment.conf";
-
         /// <summary>
         ///     Extension method intended to chain configuration derived from
         ///     Docker-supplied environment variables to the front of the fallback chain,
@@ -35,38 +37,26 @@ namespace Akka.Bootstrap.Docker
         /// </example>
         public static Config BootstrapFromDocker(this Config input, bool assignDefaultHostName = true)
         {
-            var environmentConfig = HoconConfigurationFactory.FromResource<AssemblyMarker>(DefaultConfigResource);
+            var finalConfig =  ConfigurationFactory.Empty
+                .FromEnvironment()
+                .WithFallback(
+                    ConfigurationFactory.ParseString(
+                        $@"
+                            akka.remote.dot-netty.tcp {{
+                                hostname=0.0.0.0
+                                public-hostname={Dns.GetHostName()}
+                            }}
+                        "
+                    )
+                )
+                .WithFallback(
+                    input
+                );
 
-            if(!environmentConfig.HasPath("akka.remote.dot-netty.tcp.public-hostname") && assignDefaultHostName)
-                Console.WriteLine($"[Docker-Bootstrap] Environment variable CLUSTER_IP was not set." +
-                        $"Defaulting to local hostname [{Dns.GetHostName()}] for remote addressing.");
-
-            var defaultValues = new StringBuilder();
-            defaultValues.AppendLine("akka.remote.dot-netty.tcp.hostname=0.0.0.0");
-
-            if (assignDefaultHostName)
-                defaultValues.AppendLine($"akka.remote.dot-netty.tcp.public-hostname={Dns.GetHostName()}");
-
-            if (environmentConfig.HasPath("environment.seed-nodes"))
-                defaultValues.AppendLine(
-                    $"akka.cluster.seed-nodes={environmentConfig.GetString("environment.seed-nodes").ToProperHoconArray(true)}");
-
-            var finalConfig = environmentConfig
-                .WithEnvironmentFallback()
-                .WithFallback(ConfigurationFactory.ParseString(defaultValues.ToString()))
-                .WithFallback(input);
-
+            // Diagnostic logging
             Console.WriteLine($"[Docker-Bootstrap] IP={finalConfig.GetString("akka.remote.dot-netty.tcp.public-hostname")}");
-
-            if(finalConfig.HasPath("akka.remote.dot-netty.tcp.port"))
-                Console.WriteLine($"[Docker-Bootstrap] PORT={finalConfig.GetString("akka.remote.dot-netty.tcp.port")}");
-            else
-                Console.WriteLine($"[Docker-Bootstrap] PORT=0");
-
-            if(finalConfig.HasPath("akka.cluster.seed-nodes"))
-                Console.WriteLine($"[Docker-Bootstrap] SEEDS={finalConfig.GetStringList("akka.cluster.seed-nodes")}");
-            else
-                Console.WriteLine($"[Docker-Bootstrap] SEEDS=[]");
+            Console.WriteLine($"[Docker-Bootstrap] PORT={finalConfig.GetString("akka.remote.dot-netty.tcp.port")}");
+            Console.WriteLine($"[Docker-Bootstrap] SEEDS={finalConfig.GetStringList("akka.cluster.seed-nodes")}");
 
             return finalConfig;
         }
