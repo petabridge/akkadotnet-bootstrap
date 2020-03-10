@@ -37,7 +37,7 @@ namespace Akka.Bootstrap.Docker
         /// </example>
         public static Config BootstrapFromDocker(this Config input, bool assignDefaultHostName = true)
         {
-            return ConfigurationFactory.Empty
+            var finalConfig =  ConfigurationFactory.Empty
                 .FromEnvironment()
                 .WithFallback(
                     ConfigurationFactory.ParseString(
@@ -52,6 +52,13 @@ namespace Akka.Bootstrap.Docker
                 .WithFallback(
                     input
                 );
+
+            // Diagnostic logging
+            Console.WriteLine($"[Docker-Bootstrap] IP={finalConfig.GetString("akka.remote.dot-netty.tcp.public-hostname")}");
+            Console.WriteLine($"[Docker-Bootstrap] PORT={finalConfig.GetString("akka.remote.dot-netty.tcp.port")}");
+            Console.WriteLine($"[Docker-Bootstrap] SEEDS={finalConfig.GetStringList("akka.cluster.seed-nodes")}");
+
+            return finalConfig;
         }
     }
 }
