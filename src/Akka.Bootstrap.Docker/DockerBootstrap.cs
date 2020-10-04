@@ -56,7 +56,8 @@ namespace Akka.Bootstrap.Docker
             // Diagnostic logging
             Console.WriteLine($"[Docker-Bootstrap] IP={finalConfig.GetString("akka.remote.dot-netty.tcp.public-hostname")}");
             Console.WriteLine($"[Docker-Bootstrap] PORT={finalConfig.GetString("akka.remote.dot-netty.tcp.port")}");
-            Console.WriteLine($"[Docker-Bootstrap] SEEDS={finalConfig.GetStringList("akka.cluster.seed-nodes")}");
+            var seeds = string.Join(",", finalConfig.GetStringList("akka.cluster.seed-nodes").Select(s => $"\"{s}\""));
+            Console.WriteLine($"[Docker-Bootstrap] SEEDS=[{seeds}]");
 
             return finalConfig;
         }
