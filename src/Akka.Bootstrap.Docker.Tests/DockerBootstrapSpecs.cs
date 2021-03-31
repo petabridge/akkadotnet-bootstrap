@@ -105,5 +105,20 @@ namespace Akka.Bootstrap.Docker.Tests
             myConfig.GetInt("akka.remote.dot-netty.tcp.port").Should().Be(2559);
             myConfig.GetStringList("akka.cluster.roles").Should().BeEquivalentTo(new [] { "demo", "test", "backup" });
         }
+        
+        [Fact]
+        public void ShouldNotAssignDefaultHostNameIfAssignDefaultHostNameParamIsFalse()
+        {
+            var hostname = "127.0.0.1";
+            var publicHostName = "example.local";
+            
+            var myConfig = ConfigurationFactory.Empty
+                .WithFallback(ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.hostname={hostname}"))
+                .WithFallback(ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.public-hostname={publicHostName}"))
+                .BootstrapFromDocker(assignDefaultHostName: false);
+            
+            myConfig.GetString("akka.remote.dot-netty.tcp.hostname").Should().Be(hostname);
+            myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(publicHostName);
+        }
     }
 }
