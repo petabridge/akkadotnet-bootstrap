@@ -120,5 +120,22 @@ namespace Akka.Bootstrap.Docker.Tests
             myConfig.GetString("akka.remote.dot-netty.tcp.hostname").Should().Be(hostname);
             myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(publicHostName);
         }
+
+        [Fact]
+        public void ShouldParseEnvironmentVariableWithFQN()
+        {
+            var key = "AKKA__CLUSTER__DOWNING_PROVIDER_CLASS";
+            var val = "Akka.Cluster.SBR.SplitBrainResolverProvider, Akka.Cluster";
+            Config expected =
+                "akka.cluster.downing-provider-class=\"Akka.Cluster.SBR.SplitBrainResolverProvider, Akka.Cluster\"";
+
+            var source = EnvironmentVariableConfigEntrySource.Create(key, val);
+
+            var parsedConfig = EnvironmentVariableConfigLoader.ProcessConfigSources(new[] {source});
+            parsedConfig.HasPath("akka.cluster.downing-provider-class").Should().BeTrue($"{parsedConfig.ToString()} expected to have akka.cluster.downing-provider-class defined, but did not.");
+            parsedConfig.GetString("akka.cluster.downing-provider-class").Should()
+                .Be(expected.GetString("akka.cluster.downing-provider-class"));
+
+        }
     }
 }

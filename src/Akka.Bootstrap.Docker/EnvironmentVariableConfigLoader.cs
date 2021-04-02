@@ -95,7 +95,15 @@ namespace Akka.Bootstrap.Docker
         /// <returns></returns>
         public static Config FromEnvironment(this Config input)
         {
-            var entries = GetEnvironmentVariables()
+            var envInput
+                = GetEnvironmentVariables();
+
+            return ProcessConfigSources(envInput);
+        }
+
+        internal static Config ProcessConfigSources(IEnumerable<EnvironmentVariableConfigEntrySource> envInput)
+        {
+            var entries = envInput
                 .OrderByDescending(x => x.Depth)
                 .GroupBy(x => x.Key);
 
@@ -104,8 +112,9 @@ namespace Akka.Bootstrap.Docker
             {
                 sb.Append($"{set.Key}=");
                 if (set.Count() > 1)
-                {   
-                    sb.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
+                {
+                    sb.AppendLine(
+                        $"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
                 }
                 else
                 {
@@ -113,7 +122,7 @@ namespace Akka.Bootstrap.Docker
                 }
             }
 
-            if(sb.Length == 0)
+            if (sb.Length == 0)
                 return Config.Empty;
             var config = ConfigurationFactory.ParseString(sb.ToString());
 
