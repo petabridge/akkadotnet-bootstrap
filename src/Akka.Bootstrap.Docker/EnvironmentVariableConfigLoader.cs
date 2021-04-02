@@ -81,7 +81,9 @@ namespace Akka.Bootstrap.Docker
                 }
                 else
                 {
-                    if (value.NeedQuotes() || value.NeedTripleQuotes())
+                    if (value.NeedTripleQuotes())
+                        value = value.AddTripleQuotes();
+                    else if (value.NeedQuotes())
                         value = value.AddQuotes();
                 }
 

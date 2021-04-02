@@ -8,7 +8,7 @@ namespace Akka.Bootstrap.Docker
     public static class StringExtension
     {
         public const string NotInUnquotedText = "$\"{}[]:=,#`^?!@*&\\";
-        public const char NewLine = '\u000A';
+        public const string NewLine = "\n\r";
 
         public static bool NeedQuotes(this string s)
         {
@@ -17,7 +17,7 @@ namespace Akka.Bootstrap.Docker
 
         public static bool NeedTripleQuotes(this string s)
         {
-            return s.NeedQuotes() && s.Contains(NewLine);
+            return s.NeedQuotes() && s.Any(c => NewLine.Contains(c));
         }
 
         public static string AddQuotes(this string s)
@@ -26,6 +26,11 @@ namespace Akka.Bootstrap.Docker
                 return "\"" + s.Replace("\"", "\\\"") + "\"";
 
             return "\"" + s + "\"";
+        }
+
+        public static string AddTripleQuotes(this string s)
+        {
+            return "\"\"" + s.AddQuotes() + "\"\"";
         }
     }
 }
