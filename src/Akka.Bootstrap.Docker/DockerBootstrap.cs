@@ -37,21 +37,24 @@ namespace Akka.Bootstrap.Docker
         /// </example>
         public static Config BootstrapFromDocker(this Config input, bool assignDefaultHostName = true)
         {
-            var finalConfig =  ConfigurationFactory.Empty
-                .FromEnvironment()
-                .WithFallback(
-                    ConfigurationFactory.ParseString(
-                        $@"
+            var finalConfig =  ConfigurationFactory.Empty.FromEnvironment();
+            
+            if (assignDefaultHostName)
+            {
+                finalConfig = finalConfig
+                    .WithFallback(
+                        ConfigurationFactory.ParseString(
+                            $@"
                             akka.remote.dot-netty.tcp {{
                                 hostname=0.0.0.0
                                 public-hostname={Dns.GetHostName()}
                             }}
                         "
-                    )
-                )
-                .WithFallback(
-                    input
-                );
+                        )
+                    );
+            }
+
+            finalConfig = finalConfig.WithFallback(input);
 
             // Diagnostic logging
             Console.WriteLine($"[Docker-Bootstrap] IP={finalConfig.GetString("akka.remote.dot-netty.tcp.public-hostname")}");
