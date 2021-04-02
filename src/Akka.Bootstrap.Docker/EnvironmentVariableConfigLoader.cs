@@ -79,6 +79,11 @@ namespace Akka.Bootstrap.Docker
                         value = "[]";
                     }
                 }
+                else
+                {
+                    if (value.NeedQuotes() || value.NeedTripleQuotes())
+                        value = value.AddQuotes();
+                }
 
                 yield return EnvironmentVariableConfigEntrySource.Create(
                     key.ToLower().ToString(), 
