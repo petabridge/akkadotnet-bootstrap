@@ -105,5 +105,48 @@ namespace Akka.Bootstrap.Docker.Tests
             myConfig.GetInt("akka.remote.dot-netty.tcp.port").Should().Be(2559);
             myConfig.GetStringList("akka.cluster.roles").Should().BeEquivalentTo(new [] { "demo", "test", "backup" });
         }
+		
+        [Fact]
+        public void ShouldNotAssignDefaultHostNameIfAssignDefaultHostNameParamIsFalse()
+        {
+            var hostname = "127.0.0.1";
+            var publicHostName = "example.local";
+            
+            var myConfig = ConfigurationFactory.Empty
+                .WithFallback(ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.hostname={hostname}"))
+                .WithFallback(ConfigurationFactory.ParseString($"akka.remote.dot-netty.tcp.public-hostname={publicHostName}"))
+                .BootstrapFromDocker(assignDefaultHostName: false);
+            
+            myConfig.GetString("akka.remote.dot-netty.tcp.hostname").Should().Be(hostname);
+            myConfig.GetString("akka.remote.dot-netty.tcp.public-hostname").Should().Be(publicHostName);
+        }
+		
+        [Fact]
+        public void ShouldGenerateValidHoconConfigWithComplexEnvironmentValue()
+        {
+            try
+            {
+                Environment.SetEnvironmentVariable("AKKA__CLUSTER__DOWNING_PROVIDER_CLASS", "Akka.Cluster.SplitBrainResolver, Akka.Cluster", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", "akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("AKKA__RANDOM__URL", "akka.tcp://MySys@localhost:9140", EnvironmentVariableTarget.Process);
+
+                var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
+                myConfig.GetString("akka.cluster.downing-provider-class").Should().Be("Akka.Cluster.SplitBrainResolver, Akka.Cluster");
+                myConfig.GetString("akka.random.url").Should().Be("akka.tcp://MySys@localhost:9140");
+                var expected = new[]
+                {
+                    "akka.tcp://MySys@localhost:9140",
+                    "akka.tcp://MySys@localhost:9141"
+                };
+                myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
+                myConfig.GetStringList("akka.cluster.seed-nodes").Should().BeEquivalentTo(expected);
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("AKKA__RANDOM__URL", null);
+                Environment.SetEnvironmentVariable("AKKA__CLUSTER__DOWNING_PROVIDER_CLASS", null);
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", null);
+            }
+        }
     }
 }

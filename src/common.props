@@ -2,8 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2020 Petabridge®</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.4.0</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to [Akka.NET v1.4.1](https://getakka.net/community/whats-new/akkadotnet-v1.4.html)</PackageReleaseNotes>
+    <VersionPrefix>0.5.0</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to [Akka.NET v1.4.14](https://github.com/akkadotnet/akka.net/releases/tag/1.4.14)
+[Print seed nodes when bootstrapping from environment variables as array](https://github.com/petabridge/akkadotnet-bootstrap/issues/104)</PackageReleaseNotes>
     <PackageIconUrl>https://petabridge.com/images/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/petabridge/akkadotnet-bootstrap</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/petabridge/akkadotnet-bootstrap/blob/master/LICENSE</PackageLicenseUrl>
@@ -20,11 +21,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>16.8.3</TestSdkVersion>
-    <NetCoreTestVersion>netcoreapp2.1</NetCoreTestVersion>
+    <TestSdkVersion>16.9.4</TestSdkVersion>
+    <NetCoreTestVersion>netcoreapp3.1</NetCoreTestVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NetFrameworkTestVersion>net461</NetFrameworkTestVersion>
-    <AkkaVersion>1.4.14</AkkaVersion>
+    <AkkaVersion>1.4.18</AkkaVersion>
     <SourceLinkVersion>1.0.0</SourceLinkVersion>
   </PropertyGroup>
 </Project>
