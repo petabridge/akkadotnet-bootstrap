@@ -2,35 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Akka.Configuration;
 
 namespace Akka.Bootstrap.Docker
 {
     public static class StringExtension
     {
         public const string NotInUnquotedText = "$\"{}[]:=,#`^?!@*&\\";
-        public const string NewLine = "\n\r";
 
         public static bool NeedQuotes(this string s)
-        {
-            return s.Any(c => NotInUnquotedText.Contains(c));
-        }
-
-        public static bool NeedTripleQuotes(this string s)
-        {
-            return s.NeedQuotes() && s.Any(c => NewLine.Contains(c));
-        }
+            => s.NotQuoted() && s.Any(c => NotInUnquotedText.Contains(c));
 
         public static string AddQuotes(this string s)
-        {
-            if (s.Contains('"'))
-                return "\"" + s.Replace("\"", "\\\"") + "\"";
+            => "\"" + s + "\"";
 
-            return "\"" + s + "\"";
-        }
+        public static bool NotQuoted(this string s)
+            => s.First() != '"' && s.Last() != '"';
 
-        public static string AddTripleQuotes(this string s)
+        public static bool Quoted(this string s)
+            => s.First() == '"' && s.Last() == '"';
+
+        public static string AddQuotesIfNeeded(this string s)
+            => s.NeedQuotes() ? s.AddQuotes() : s;
+
+        public static string UnQuoteIfNeeded(this string s)
         {
-            return "\"\"" + s.AddQuotes() + "\"\"";
+            return s.NotQuoted() 
+                ? s 
+                : new string(s.Skip(1).Take(s.Length - 2).ToArray());
         }
     }
 }

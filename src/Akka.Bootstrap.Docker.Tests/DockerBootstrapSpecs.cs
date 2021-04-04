@@ -22,6 +22,18 @@ namespace Akka.Bootstrap.Docker.Tests
         [InlineData("akka.tcp://MySys@localhost:9140")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141")]
         [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142")]
+        // The whole line is quoted
+        [InlineData("\"akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142\"")]
+        // The whole line is quoted with arbitraty whitespaces
+        [InlineData("   \"akka.tcp://MySys@localhost:9140,  akka.tcp://MySys@localhost:9141,   akka.tcp://MySys@localhost:9142 \"  ")]
+        // Every item is quoted
+        [InlineData("\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\", \"akka.tcp://MySys@localhost:9142\"")]
+        // Only one item is quoted
+        [InlineData("\"akka.tcp://MySys@localhost:9140\", akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142")]
+        // Only one item is quoted
+        [InlineData("akka.tcp://MySys@localhost:9140, \"akka.tcp://MySys@localhost:9141\", akka.tcp://MySys@localhost:9142")]
+        // Only one item is quoted
+        [InlineData("akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, \"akka.tcp://MySys@localhost:9142\"")]
         public void ShouldStartIfValidSeedNodesIfSupplied(string seedNodes)
         {
             try
@@ -30,7 +42,33 @@ namespace Akka.Bootstrap.Docker.Tests
                 var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
                 myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
                 var seeds = myConfig.GetStringList("akka.cluster.seed-nodes").Select(x => x.Trim());
-                seeds.Should().BeEquivalentTo(seedNodes.Split(",").Select(x => x.Trim()));
+                seeds.Should().BeEquivalentTo(seedNodes.Replace("\"", "").Split(",").Select(x => x.Trim()));
+            }
+            finally
+            {
+                // clean the environment variable up afterwards
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", null);
+            }
+        }
+
+        [Fact]
+        public void ShouldStartIfValidSeedNodesIsSuppliedInIndexedFormat()
+        {
+            try
+            {
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS__1", "akka.tcp://MySys@localhost:9140", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS__2", "\"akka.tcp://MySys@localhost:9141\"", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS__3", "akka.tcp://MySys@localhost:9142", EnvironmentVariableTarget.Process);
+                var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
+                myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
+                var seeds = myConfig.GetStringList("akka.cluster.seed-nodes").Select(x => x.Trim());
+                var expected = new[]
+                {
+                    "akka.tcp://MySys@localhost:9140",
+                    "akka.tcp://MySys@localhost:9141",
+                    "akka.tcp://MySys@localhost:9142",
+                };
+                seeds.Should().BeEquivalentTo(expected);
             }
             finally
             {
