@@ -46,22 +46,34 @@ namespace Akka.Bootstrap.Docker
                 var key = set.Key.ToString();
                 var isList = false;
 
-                if (ExistingMappings.TryGetValue(key, out var mappedKey))
+                foreach (var mapKey in ExistingMappings.Keys)
                 {
-                    isList = ExistingMappingLists.Contains(key);
+                    if (key.Contains(mapKey))
+                    {
+                        foreach (var listMap in ExistingMappingLists)
+                        {
+                            if (key == listMap)
+                            {
+                                isList = true;
+                                break;
+                            }
+                        }
 
-                    // Format the key to appear as if it were an environment variable
-                    // in the "AKKA__" format
-                    key = mappedKey.ToUpper().Replace(".", "__").Replace("-", "_");
+                        // Format the key to appear as if it were an environment variable
+                        // in the "AKKA__" format
+                        key = key.Replace(mapKey, ExistingMappings[mapKey])
+                            .ToUpperInvariant().Replace(".", "__").Replace("-", "_");
+                        break;
+                    }
                 }
 
                 if (!UseAllEnvironmentVariables)
-                if (!key.StartsWith("AKKA__", StringComparison.OrdinalIgnoreCase))
-                    continue;
+                    if (!key.StartsWith("AKKA__", StringComparison.OrdinalIgnoreCase))
+                        continue;
 
                 // Skip empty environment variables
                 var value = set.Value?.ToString()?.Trim();
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrWhiteSpace(value))
                     continue;
 
                 // Ideally, lists should be passed through in an indexed format.
@@ -69,31 +81,30 @@ namespace Akka.Bootstrap.Docker
                 // Otherwise, we must format the string as an array.
                 if (isList)
                 {
-                    if (value.First() != '[' || value.Last() != ']') 
+                    value = value.Trim();
+                    var values = new ListParser().Parse(value).ToArray();
+                    if (values.Length == 1)
                     {
-                        var values = value.Split(',').Select(x => x.Trim());
-                        value = $"[\" {String.Join("\",\"", values)} \"]";
-                    } 
-                    else if (String.IsNullOrEmpty(value.Substring(1, value.Length - 2).Trim()))
-                    {
-                        value = "[]";
+                        // if the parser only returns a single value,
+                        // we might have a quoted environment variable
+                        values = new ListParser().Parse(values[0]).ToArray();
                     }
+
+                    // always assume that string needs to be quoted
+                    value = $"[{string.Join(",", values.Select(s => s.AddQuotes()))}]";
                 }
                 else
                 {
-                    if (value.NeedTripleQuotes())
-                        value = value.AddTripleQuotes();
-                    else if (value.NeedQuotes())
-                        value = value.AddQuotes();
+                    value = value.AddQuotesIfNeeded();
                 }
 
                 yield return EnvironmentVariableConfigEntrySource.Create(
-                    key.ToLower().ToString(), 
+                    key.ToLowerInvariant(),
                     value
                 );
             }
         }
-        
+
         /// <summary>
         /// Load AKKA configuration from the environment variables that are 
         /// accessible from the current process.
@@ -112,7 +123,7 @@ namespace Akka.Bootstrap.Docker
                 sb.Append($"{set.Key}=");
                 if (set.Count() > 1)
                 {   
-                    sb.AppendLine($"[\n\t\"{String.Join("\",\n\t\"", set.OrderBy(y => y.Index).Select(y => y.Value.Trim()))}\"]");
+                    sb.AppendLine($"[{string.Join(",", set.OrderBy(y => y.Index).Select(y => y.Value.AddQuotesIfNeeded()))}]");
                 }
                 else
                 {
