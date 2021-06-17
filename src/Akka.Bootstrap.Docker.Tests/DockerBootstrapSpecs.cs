@@ -117,6 +117,73 @@ namespace Akka.Bootstrap.Docker.Tests
             }
         }
 
+        [Theory]
+        [InlineData("[]", new string[0])]
+        [InlineData(
+            "[akka.tcp://MySys@localhost:9140]", 
+            new[]{"akka.tcp://MySys@localhost:9140"})]
+        [InlineData(
+            "[akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141]", 
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141"})]
+        [InlineData(
+            "[akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // The whole line is quoted
+        [InlineData(
+            "[\"akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142\"]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // The whole line is quoted with arbitrary whitespaces
+        [InlineData(
+            "[   \"akka.tcp://MySys@localhost:9140,  akka.tcp://MySys@localhost:9141,   akka.tcp://MySys@localhost:9142 \"  ]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // Every item is quoted
+        [InlineData(
+            "[\"akka.tcp://MySys@localhost:9140\", \"akka.tcp://MySys@localhost:9141\", \"akka.tcp://MySys@localhost:9142\"]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // Only one item is quoted
+        [InlineData(
+            "[\"akka.tcp://MySys@localhost:9140\", akka.tcp://MySys@localhost:9141, akka.tcp://MySys@localhost:9142]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // Only one item is quoted
+        [InlineData(
+            "[akka.tcp://MySys@localhost:9140, \"akka.tcp://MySys@localhost:9141\", akka.tcp://MySys@localhost:9142]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        // Only one item is quoted
+        [InlineData(
+            "[akka.tcp://MySys@localhost:9140, akka.tcp://MySys@localhost:9141, \"akka.tcp://MySys@localhost:9142\"]",
+            new[]{"akka.tcp://MySys@localhost:9140", 
+                "akka.tcp://MySys@localhost:9141", 
+                "akka.tcp://MySys@localhost:9142"})]
+        public void ShouldStartIfValidSeedNodesIfSuppliedInArrayFormat(string seedNodes, string[] expected)
+        {
+            try
+            {
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", seedNodes, EnvironmentVariableTarget.Process);
+                var myConfig = ConfigurationFactory.Empty.BootstrapFromDocker();
+                myConfig.HasPath("akka.cluster.seed-nodes").Should().BeTrue();
+                var seeds = myConfig.GetStringList("akka.cluster.seed-nodes").Select(x => x.Trim());
+                seeds.Should().BeEquivalentTo(expected);
+            }
+            finally
+            {
+                // clean the environment variable up afterwards
+                Environment.SetEnvironmentVariable("CLUSTER_SEEDS", null);
+            }
+        }
+
         [Fact]
         public void ShouldStartIfValidSeedNodesIsSuppliedInIndexedFormat()
         {

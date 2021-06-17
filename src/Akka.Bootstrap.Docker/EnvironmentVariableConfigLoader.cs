@@ -82,12 +82,29 @@ namespace Akka.Bootstrap.Docker
                 if (isList)
                 {
                     value = value.Trim();
-                    var values = new ListParser().Parse(value).ToArray();
+
+                    string[] values;
+                    try
+                    {
+                        values = new ListParser().Parse(value).ToArray();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ConfigurationException($"Failed to parse list value [{value}]", e);
+                    }
+
                     if (values.Length == 1)
                     {
                         // if the parser only returns a single value,
                         // we might have a quoted environment variable
-                        values = new ListParser().Parse(values[0]).ToArray();
+                        try
+                        {
+                            values = new ListParser().Parse(values[0]).ToArray();
+                        }
+                        catch (Exception e)
+                        {
+                            throw new ConfigurationException($"Failed to parse list value [{values[0]}]", e);
+                        }
                     }
 
                     // always assume that string needs to be quoted
