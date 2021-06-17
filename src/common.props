@@ -21,11 +21,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>16.9.4</TestSdkVersion>
+    <TestSdkVersion>16.10.0</TestSdkVersion>
     <NetCoreTestVersion>netcoreapp3.1</NetCoreTestVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NetFrameworkTestVersion>net461</NetFrameworkTestVersion>
-    <AkkaVersion>1.4.18</AkkaVersion>
+    <AkkaVersion>1.4.21</AkkaVersion>
     <SourceLinkVersion>1.0.0</SourceLinkVersion>
   </PropertyGroup>
 </Project>
