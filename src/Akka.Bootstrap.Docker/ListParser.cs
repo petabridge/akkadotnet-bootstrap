@@ -122,6 +122,7 @@ namespace Akka.Bootstrap.Docker
                         _state = TokenizerState.AfterComma;
                         // consume it and go on
                         Consume();
+                        ConsumeConsecutiveWhiteSpaces();
                         break;
                     }
 
@@ -133,7 +134,7 @@ namespace Akka.Bootstrap.Docker
                         Consume();
                         ConsumeConsecutiveWhiteSpaces();
                         Peek(out eol);
-                        if (!eol || _state != TokenizerState.AfterComma || _state != TokenizerState.EndOfString)
+                        if (!eol || (_state != TokenizerState.AfterComma && _state != TokenizerState.EndOfString))
                             throw new ConfigurationException(
                                 $"Closing square brackets can only appear once at the end of the environment variable value. Position: [{bracketPosition}]");
                         break;
