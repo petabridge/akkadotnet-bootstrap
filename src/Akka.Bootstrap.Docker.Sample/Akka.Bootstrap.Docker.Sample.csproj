@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Petabridge.Cmd.Cluster" Version="1.0.1" />
+    <PackageReference Include="Petabridge.Cmd.Cluster" Version="1.2.2" />
     <PackageReference Include="Petabridge.Cmd.Remote" Version="0.8.5" />
   </ItemGroup>
 
